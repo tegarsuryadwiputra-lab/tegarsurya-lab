@@ -23,8 +23,8 @@
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 pb-24">
 
-  <!-- ================= LOGIN PAGE (Desain Baru ala Akun Google) ================= -->
-  <div id="loginPage" class="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col items-center justify-center px-6 transition-opacity duration-500">
+  <!-- ================= LOGIN PAGE ================= -->
+  <div id="loginPage" class="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col items-center justify-center px-6 transition-all duration-300">
     <div class="bg-primary text-white p-4 rounded-2xl mb-4 shadow-lg">
       <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
     </div>
@@ -33,37 +33,33 @@
     
     <div class="w-full max-w-sm bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border dark:border-gray-700 shadow-sm text-left">
       <div class="flex items-center gap-2 mb-4 justify-center">
-        <!-- Logo Google Buatan (Simbol G) -->
         <div class="w-8 h-8 rounded-full bg-white border dark:border-gray-600 flex items-center justify-center shadow-sm">
           <span class="font-bold text-blue-500 text-lg">G</span>
         </div>
         <h2 class="font-bold text-lg">Sign In Profil</h2>
       </div>
       
-      <!-- Kolom Akun Google -->
       <div class="mb-4">
         <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 pl-1">Akun Google (Email)</label>
         <input type="email" id="loginEmail" placeholder="contoh@gmail.com" class="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-sm">
       </div>
       
-      <!-- Kolom Nama Panggilan -->
       <div class="mb-6">
         <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 pl-1">Nama Panggilan</label>
         <input type="text" id="loginName" placeholder="Masukkan nama panggilan..." class="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-sm">
       </div>
 
-      <button onclick="handleLogin()" class="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Lanjutkan</button>
+      <!-- Tambahan type="button" agar tidak error refresh -->
+      <button type="button" onclick="handleLogin()" class="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Lanjutkan</button>
       <p class="text-[10px] text-gray-400 text-center mt-4">Data tersimpan aman di perangkatmu.</p>
     </div>
   </div>
 
   <!-- ================= MAIN APP ================= -->
-  <div id="mainApp" class="hidden opacity-0 transition-opacity duration-500">
-    
+  <div id="mainApp" class="hidden transition-all duration-300">
     <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
       <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
         <div class="flex items-center gap-2">
-          <!-- Avatar User -->
           <div class="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center font-bold text-base shadow-sm" id="avatarName">N</div>
           <div>
             <p class="text-[10px] text-gray-500 font-bold -mb-1">Halo,</p>
@@ -83,7 +79,6 @@
     </header>
 
     <main class="max-w-md mx-auto px-4 mt-4 relative">
-
       <!-- HALAMAN 1: SCAN -->
       <section id="page-scan" class="page-section">
         <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
@@ -94,15 +89,12 @@
               Buka Kamera
             </button>
           </div>
-          
           <div id="reader" class="hidden mb-3 bg-gray-100 dark:bg-gray-900 rounded-xl border border-dashed border-gray-300"></div>
-          
           <div class="relative flex py-2 items-center">
             <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
             <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">Atau ketik manual</span>
             <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
           </div>
-
           <div class="flex gap-2 mt-2">
             <input type="text" id="barcodeInput" placeholder="Ketik Kode / Nama..." class="flex-1 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary w-full text-sm">
             <button onclick="searchProduct()" class="bg-gray-200 dark:bg-gray-600 dark:text-white px-5 py-3 rounded-xl font-bold text-sm">Cari</button>
@@ -122,4 +114,75 @@
           </div>
           <div class="flex gap-2">
             <button onclick="addToDaily()" class="flex-1 bg-primary text-white py-3 rounded-xl font-bold text-sm shadow-md">Catat Konsumsi</button>
-            <button onclick="addToCompare()" class="bg-gray-200 dark:bg-gray-700 dark:text-white px-3 py-3 rounded-xl font
+            <button onclick="addToCompare()" class="bg-gray-200 dark:bg-gray-700 dark:text-white px-3 py-3 rounded-xl font-bold text-sm">Bandingkan</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- HALAMAN 2: TARGET & JADWAL -->
+      <section id="page-target" class="page-section hidden">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
+          <div class="mb-5 border-b dark:border-gray-700 pb-4">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="font-bold text-sm">📅 Jadwal Latihan Mingguan</h3>
+              <span class="text-[10px] text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">Ketuk untuk ubah</span>
+            </div>
+            <div id="scheduleGrid" class="grid grid-cols-7 gap-1"></div>
+            <p id="todayStatusText" class="text-xs text-center mt-3 text-primary font-bold">Hari ini: Mode Latihan 🏋️</p>
+          </div>
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-lg">Target Hari Ini</h2>
+            <button onclick="toggleCalc()" class="text-xs text-primary bg-green-50 dark:bg-gray-700 px-3 py-1.5 rounded-lg font-bold">Ubah Dasar</button>
+          </div>
+          <div id="calcBox" class="hidden mb-5 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm border dark:border-gray-600">
+            <p class="font-bold mb-3 text-center">Hitung Base Target (Rest Day)</p>
+            <div class="grid grid-cols-2 gap-3 mb-3">
+              <input type="number" id="calcWeight" placeholder="Berat (kg)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
+              <input type="number" id="calcHeight" placeholder="Tinggi (cm)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
+            </div>
+            <button onclick="calculateTDEE()" class="w-full bg-primary text-white rounded-lg p-3 font-bold shadow">Simpan Target</button>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium">Kalori</span>
+              <span id="calText" class="font-bold text-primary">0 / 2000 kcal</span>
+            </div>
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-4 overflow-hidden">
+              <div id="calBar" class="bg-primary h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium">Protein</span>
+              <span id="proText" class="font-bold text-blue-500">0 / 80 g</span>
+            </div>
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+              <div id="proBar" class="bg-blue-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HALAMAN 3 & 4 -->
+      <section id="page-compare" class="page-section hidden">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-lg">Adu Produk</h2>
+            <button onclick="clearCompare()" class="text-xs bg-red-100 text-red-600 px-3 py-1.5 rounded-lg font-bold">Bersihkan</button>
+          </div>
+          <p id="compareEmpty" class="text-sm text-center text-gray-500 py-6">Belum ada produk. Cari produk di halaman Scan lalu klik "Bandingkan".</p>
+          <div id="compareGrid" class="grid grid-cols-2 gap-3 text-sm hidden"></div>
+        </div>
+      </section>
+
+      <section id="page-stats" class="page-section hidden">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-lg">Statistik 7 Hari</h2>
+            <button onclick="exportWA()" class="bg-green-500 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 font-bold shadow">Ekspor WA</button>
+          </div>
+          <div class="relative w-full h-56"><canvas id="weeklyChart"></canvas></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- NAVIGASI BAWAH -->
+    <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-
