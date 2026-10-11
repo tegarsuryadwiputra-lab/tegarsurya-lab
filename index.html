@@ -7,6 +7,8 @@
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Library Kamera Barcode -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -15,255 +17,336 @@
   </script>
   <style>
     body { transition: background-color 0.3s, color 0.3s; }
-    /* Sembunyikan scrollbar agar lebih mirip aplikasi */
     ::-webkit-scrollbar { display: none; }
+    /* Memperbaiki tampilan scanner bawaan library */
+    #reader { width: 100%; border-radius: 1rem; overflow: hidden; border: none !important; }
+    #reader video { object-fit: cover; border-radius: 1rem; }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 pb-24">
 
-  <!-- Header -->
-  <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
-    <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center gap-2">
-        <div class="bg-primary text-white p-2 rounded-lg">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
-        </div>
-        <h1 class="font-bold text-xl text-primary">NutriScan</h1>
-      </div>
-      <div class="flex items-center gap-3">
-        <div class="flex items-center text-orange-500 font-bold bg-orange-100 dark:bg-gray-700 px-2 py-1 rounded-full text-sm">
-          🔥 <span id="streakCount">0</span> Hari
-        </div>
-        <button id="themeToggle" class="p-2 bg-gray-100 dark:bg-gray-700 rounded-full">🌙</button>
-      </div>
+  <!-- ================= HALAMAN LOGIN / SIGN IN ================= -->
+  <div id="loginPage" class="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col items-center justify-center px-6 transition-opacity duration-500">
+    <div class="bg-primary text-white p-4 rounded-2xl mb-4 shadow-lg">
+      <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
     </div>
-  </header>
+    <h1 class="text-3xl font-bold text-primary mb-2">NutriScan</h1>
+    <p class="text-gray-500 dark:text-gray-400 mb-8 text-center text-sm">Lacak nutrisi harianmu dari produk Indomaret dengan mudah.</p>
+    
+    <div class="w-full max-w-sm bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border dark:border-gray-700 shadow-sm">
+      <h2 class="font-bold mb-4 text-lg">Sign In Profil</h2>
+      <input type="text" id="loginName" placeholder="Masukkan Nama Kamu..." class="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary mb-4">
+      <button onclick="handleLogin()" class="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Mulai Sekarang</button>
+    </div>
+  </div>
 
-  <!-- Container Utama -->
-  <main class="max-w-md mx-auto px-4 mt-4 relative">
-
-    <!-- HALAMAN 1: SCANNER -->
-    <section id="page-scan" class="page-section">
-      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
-        <h2 class="font-bold mb-3 text-lg">Cari Produk</h2>
-        <div class="flex gap-2">
-          <input type="text" id="barcodeInput" placeholder="Ketik Barcode atau Nama..." class="flex-1 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary w-full">
-          <button onclick="searchProduct()" class="bg-primary text-white px-5 py-3 rounded-xl font-bold">Cari</button>
-        </div>
-      </div>
-
-      <div id="resultCard" class="hidden bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-primary">
-        <div class="flex justify-between items-start mb-3">
-          <h3 id="resName" class="font-bold text-lg leading-tight">Nama Produk</h3>
-          <span id="badgeProtein" class="hidden bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded border border-yellow-300 whitespace-nowrap">💪 Tinggi Protein</span>
-        </div>
-        <div class="grid grid-cols-4 gap-2 text-center mb-4">
-          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Kalori</p><p id="resCal" class="font-bold text-red-500">-</p></div>
-          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Protein</p><p id="resPro" class="font-bold text-primary">-</p></div>
-          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Karbo</p><p id="resCarb" class="font-bold text-blue-500">-</p></div>
-          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Lemak</p><p id="resFat" class="font-bold text-orange-500">-</p></div>
-        </div>
-        <div class="flex gap-2">
-          <button onclick="addToDaily()" class="flex-1 bg-primary text-white py-3 rounded-xl font-bold text-sm shadow-md">Catat Konsumsi</button>
-          <button onclick="addToCompare()" class="bg-gray-200 dark:bg-gray-700 dark:text-white px-3 py-3 rounded-xl font-bold text-sm">Bandingkan</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- HALAMAN 2: TARGET & KALKULATOR -->
-    <section id="page-target" class="page-section hidden">
-      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="font-bold text-lg">Target Hari Ini</h2>
-          <button onclick="toggleCalc()" class="text-xs text-primary bg-green-50 dark:bg-gray-700 px-3 py-1.5 rounded-lg font-bold">Kalkulator</button>
-        </div>
-        
-        <div id="calcBox" class="hidden mb-5 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm border dark:border-gray-600">
-          <p class="font-bold mb-3 text-center">Hitung Kebutuhan Optimal</p>
-          <div class="grid grid-cols-2 gap-3 mb-3">
-            <input type="number" id="calcWeight" placeholder="Berat (kg)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
-            <input type="number" id="calcHeight" placeholder="Tinggi (cm)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
-          </div>
-          <button onclick="calculateTDEE()" class="w-full bg-primary text-white rounded-lg p-3 font-bold shadow">Simpan Target</button>
-        </div>
-
-        <div>
-          <div class="flex justify-between text-sm mb-1">
-            <span class="font-medium">Kalori</span>
-            <span id="calText" class="font-bold text-primary">0 / 2000 kcal</span>
-          </div>
-          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-4 overflow-hidden">
-            <div id="calBar" class="bg-primary h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
-          </div>
-          <div class="flex justify-between text-sm mb-1">
-            <span class="font-medium">Protein</span>
-            <span id="proText" class="font-bold text-blue-500">0 / 80 g</span>
-          </div>
-          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
-            <div id="proBar" class="bg-blue-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+  <!-- ================= APLIKASI UTAMA (Disembunyikan sebelum login) ================= -->
+  <div id="mainApp" class="hidden opacity-0 transition-opacity duration-500">
+    
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+      <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm" id="avatarName">N</div>
+          <div>
+            <p class="text-[10px] text-gray-500 font-bold -mb-1">Halo,</p>
+            <h1 class="font-bold text-base text-primary leading-tight" id="greetName">User</h1>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- HALAMAN 3: BANDINGKAN -->
-    <section id="page-compare" class="page-section hidden">
-      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="font-bold text-lg">Adu Produk</h2>
-          <button onclick="clearCompare()" class="text-xs bg-red-100 text-red-600 px-3 py-1.5 rounded-lg font-bold">Bersihkan</button>
-        </div>
-        <p id="compareEmpty" class="text-sm text-center text-gray-500 py-6">Belum ada produk. Cari produk di halaman Scan lalu klik "Bandingkan".</p>
-        <div id="compareGrid" class="grid grid-cols-2 gap-3 text-sm hidden">
-          <!-- Injected via JS -->
-        </div>
-      </div>
-    </section>
-
-    <!-- HALAMAN 4: GRAFIK -->
-    <section id="page-stats" class="page-section hidden">
-      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="font-bold text-lg">Statistik 7 Hari</h2>
-          <button onclick="exportWA()" class="bg-green-500 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 font-bold shadow">
-            Ekspor ke WA
+        <div class="flex items-center gap-3">
+          <div class="flex items-center text-orange-500 font-bold bg-orange-100 dark:bg-gray-700 px-2 py-1 rounded-full text-sm">
+            🔥 <span id="streakCount">0</span> Hari
+          </div>
+          <button id="themeToggle" class="p-2 bg-gray-100 dark:bg-gray-700 rounded-full">🌙</button>
+          <button onclick="handleLogout()" class="p-2 text-red-500 bg-red-50 dark:bg-gray-700 rounded-full">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
           </button>
         </div>
-        <div class="relative w-full h-56">
-          <canvas id="weeklyChart"></canvas>
-        </div>
       </div>
-    </section>
+    </header>
 
-  </main>
+    <main class="max-w-md mx-auto px-4 mt-4 relative">
 
-  <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border-t dark:border-gray-700 flex justify-around p-3 pb-4 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-    <button onclick="switchTab('page-scan', this)" class="nav-btn flex flex-col items-center text-primary w-1/4">
-      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-      <span class="text-[10px] font-bold">Scan</span>
-    </button>
-    <button onclick="switchTab('page-target', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
-      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-      <span class="text-[10px] font-bold">Target</span>
-    </button>
-    <button onclick="switchTab('page-compare', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
-      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-      <span class="text-[10px] font-bold">Bandingkan</span>
-    </button>
-    <button onclick="switchTab('page-stats', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
-      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
-      <span class="text-[10px] font-bold">Grafik</span>
-    </button>
-  </nav>
+      <!-- HALAMAN 1: SCANNER (Dengan Kamera) -->
+      <section id="page-scan" class="page-section">
+        
+        <!-- Live Camera Area -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
+          <div class="flex justify-between items-center mb-3">
+            <h2 class="font-bold text-lg">Pindai Barcode</h2>
+            <button id="startCamBtn" onclick="startCamera()" class="bg-primary text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-md">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+              Buka Kamera
+            </button>
+          </div>
+          
+          <!-- Kotak Kamera Scanner -->
+          <div id="reader" class="hidden mb-3 bg-gray-100 dark:bg-gray-900 rounded-xl"></div>
+          
+          <div class="relative flex py-2 items-center">
+            <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+            <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">Atau ketik manual</span>
+            <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+          </div>
+
+          <div class="flex gap-2 mt-2">
+            <input type="text" id="barcodeInput" placeholder="Ketik Kode / Nama..." class="flex-1 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary w-full text-sm">
+            <button onclick="searchProduct()" class="bg-gray-200 dark:bg-gray-600 dark:text-white px-5 py-3 rounded-xl font-bold text-sm">Cari</button>
+          </div>
+        </div>
+
+        <!-- Kartu Hasil (Tetap sama) -->
+        <div id="resultCard" class="hidden bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-primary">
+          <div class="flex justify-between items-start mb-3">
+            <h3 id="resName" class="font-bold text-lg leading-tight">Nama Produk</h3>
+            <span id="badgeProtein" class="hidden bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded border border-yellow-300 whitespace-nowrap">💪 Tinggi Protein</span>
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-center mb-4">
+            <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Kalori</p><p id="resCal" class="font-bold text-red-500">-</p></div>
+            <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Protein</p><p id="resPro" class="font-bold text-primary">-</p></div>
+            <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Karbo</p><p id="resCarb" class="font-bold text-blue-500">-</p></div>
+            <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Lemak</p><p id="resFat" class="font-bold text-orange-500">-</p></div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="addToDaily()" class="flex-1 bg-primary text-white py-3 rounded-xl font-bold text-sm shadow-md">Catat Konsumsi</button>
+            <button onclick="addToCompare()" class="bg-gray-200 dark:bg-gray-700 dark:text-white px-3 py-3 rounded-xl font-bold text-sm">Bandingkan</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- HALAMAN 2: TARGET & KALKULATOR (Tetap sama) -->
+      <section id="page-target" class="page-section hidden">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
+          <div class="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-3 rounded-xl mb-4 border dark:border-gray-600">
+            <span class="font-bold text-sm">🏋️ Mode Latihan (Gym Day)</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="gymToggle" class="sr-only peer" onchange="toggleGymMode()">
+              <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </div>
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-lg">Target Hari Ini</h2>
+            <button onclick="toggleCalc()" class="text-xs text-primary bg-green-50 dark:bg-gray-700 px-3 py-1.5 rounded-lg font-bold">Ubah Dasar</button>
+          </div>
+          <div id="calcBox" class="hidden mb-5 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm border dark:border-gray-600">
+            <p class="font-bold mb-3 text-center">Hitung Base Target (Rest Day)</p>
+            <div class="grid grid-cols-2 gap-3 mb-3">
+              <input type="number" id="calcWeight" placeholder="Berat (kg)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
+              <input type="number" id="calcHeight" placeholder="Tinggi (cm)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
+            </div>
+            <button onclick="calculateTDEE()" class="w-full bg-primary text-white rounded-lg p-3 font-bold shadow">Simpan Target</button>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium">Kalori</span>
+              <span id="calText" class="font-bold text-primary">0 / 2000 kcal</span>
+            </div>
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-4 overflow-hidden">
+              <div id="calBar" class="bg-primary h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium">Protein</span>
+              <span id="proText" class="font-bold text-blue-500">0 / 80 g</span>
+            </div>
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+              <div id="proBar" class="bg-blue-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HALAMAN 3 & 4 (Tetap sama) -->
+      <section id="page-compare" class="page-section hidden">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-lg">Adu Produk</h2>
+            <button onclick="clearCompare()" class="text-xs bg-red-100 text-red-600 px-3 py-1.5 rounded-lg font-bold">Bersihkan</button>
+          </div>
+          <p id="compareEmpty" class="text-sm text-center text-gray-500 py-6">Belum ada produk. Cari produk di halaman Scan lalu klik "Bandingkan".</p>
+          <div id="compareGrid" class="grid grid-cols-2 gap-3 text-sm hidden"></div>
+        </div>
+      </section>
+
+      <section id="page-stats" class="page-section hidden">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-lg">Statistik 7 Hari</h2>
+            <button onclick="exportWA()" class="bg-green-500 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 font-bold shadow">Ekspor WA</button>
+          </div>
+          <div class="relative w-full h-56"><canvas id="weeklyChart"></canvas></div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border-t dark:border-gray-700 flex justify-around p-3 pb-4 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <button onclick="switchTab('page-scan', this)" class="nav-btn flex flex-col items-center text-primary w-1/4">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        <span class="text-[10px] font-bold">Scan</span>
+      </button>
+      <button onclick="switchTab('page-target', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <span class="text-[10px] font-bold">Target</span>
+      </button>
+      <button onclick="switchTab('page-compare', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+        <span class="text-[10px] font-bold">Bandingkan</span>
+      </button>
+      <button onclick="switchTab('page-stats', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+        <span class="text-[10px] font-bold">Grafik</span>
+      </button>
+    </nav>
+  </div> <!-- End Main App -->
 
   <script>
-    // 1. DATABASE PRODUK (Diperbanyak!)
+    // 1. DATABASE
     const database = {
-      // Snack & Coklat
-      "8992753033102": { name: "SilverQueen Chunky Bar", cal: 170, pro: 3, carb: 18, fat: 10 },
+      "8992753033102": { name: "SilverQueen Chunky", cal: 170, pro: 3, carb: 18, fat: 10 },
       "8996001340011": { name: "Beng-beng Regular", cal: 110, pro: 1, carb: 16, fat: 5 },
-      "8998000000201": { name: "Tango Wafer Coklat", cal: 140, pro: 2, carb: 20, fat: 6 },
       "8992753075102": { name: "Pocky Choco", cal: 100, pro: 2, carb: 14, fat: 4 },
       "8999000000002": { name: "Soyjoy Crispy", cal: 130, pro: 4, carb: 15, fat: 6 },
-      "8998000000202": { name: "Fitbar Multigrain", cal: 90, pro: 2, carb: 15, fat: 3 },
-      
-      // Roti & Mie
       "8997001430018": { name: "Sari Roti Tawar Spesial", cal: 900, pro: 24, carb: 160, fat: 14 },
       "089686010947": { name: "Indomie Goreng", cal: 380, pro: 8, carb: 54, fat: 14 },
-      "8992753112234": { name: "Pop Mie Ayam", cal: 320, pro: 6, carb: 42, fat: 12 },
-      "8886013700104": { name: "Mie Gemez Enaak", cal: 130, pro: 2, carb: 18, fat: 6 },
-      "8998866200578": { name: "Mie Sedaap Goreng", cal: 400, pro: 9, carb: 55, fat: 16 },
-
-      // Minuman Ringan & Kopi
       "8996001600146": { name: "Teh Pucuk Harum", cal: 80, pro: 0, carb: 20, fat: 0 },
-      "8997033810017": { name: "Le Minerale (600ml)", cal: 0, pro: 0, carb: 0, fat: 0 },
-      "8991388102123": { name: "Aqua Air Mineral", cal: 0, pro: 0, carb: 0, fat: 0 },
-      "8999999033411": { name: "Bear Brand", cal: 120, pro: 6, carb: 9, fat: 7 },
-      "8991002101036": { name: "Teh Botol Sosro", cal: 100, pro: 0, carb: 25, fat: 0 },
-
-      // Susu & Makanan Olahraga / Tinggi Protein
       "8992753011018": { name: "Ultra Milk Low Fat", cal: 110, pro: 8, carb: 15, fat: 2 },
       "8996001600207": { name: "L-Men 2Go", cal: 140, pro: 12, carb: 18, fat: 3 },
-      "8991000000003": { name: "Cimory Yogurt Squeeze", cal: 120, pro: 4, carb: 20, fat: 3 },
-      "2000000000001": { name: "Telur Rebus Indomaret (2)", cal: 155, pro: 12, carb: 1, fat: 10 },
+      "2000000000001": { name: "Telur Rebus Indomaret", cal: 155, pro: 12, carb: 1, fat: 10 },
       "2000000000002": { name: "Edamame Rebus", cal: 120, pro: 11, carb: 10, fat: 5 },
       "2000000000003": { name: "Dada Ayam Goreng (Bento)", cal: 250, pro: 25, carb: 5, fat: 12 }
     };
 
-    // State Variables
     let today = new Date().toISOString().split('T')[0];
     let dailyLog = JSON.parse(localStorage.getItem('dailyLog')) || { cal: 0, pro: 0, carb: 0, fat: 0, date: today };
     let targets = JSON.parse(localStorage.getItem('targets')) || { cal: 2000, pro: 85 }; 
+    let isGymDay = localStorage.getItem('isGymDay') === 'true';
     let currentScanned = null;
     let compareList = [];
     let chartInstance = null;
+    let html5QrcodeScanner = null; // Variabel untuk kamera
 
-    function initApp() {
-      checkStreak();
-      checkNewDay();
-      updateProgress();
-      setupTheme();
-      renderChart(); // Prepare chart di background
-    }
-
-    // 2. SISTEM NAVIGASI (SPA)
-    function switchTab(tabId, btnElement) {
-      // Sembunyikan semua halaman
-      document.querySelectorAll('.page-section').forEach(page => {
-        page.classList.add('hidden');
-      });
-      // Tampilkan halaman yang dipilih
-      document.getElementById(tabId).classList.remove('hidden');
-
-      // Reset warna semua tombol nav
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-primary');
-        btn.classList.add('text-gray-400');
-      });
-      // Beri warna primary pada tombol yang diklik
-      btnElement.classList.remove('text-gray-400');
-      btnElement.classList.add('text-primary');
-
-      // Update ukuran grafik jika tab statistik dibuka
-      if(tabId === 'page-stats' && chartInstance) {
-        chartInstance.resize();
+    // 2. SISTEM LOGIN
+    function checkLogin() {
+      const userName = localStorage.getItem('nutriUserName');
+      const loginPage = document.getElementById('loginPage');
+      const mainApp = document.getElementById('mainApp');
+      
+      if (userName) {
+        // Sudah Login
+        document.getElementById('greetName').innerText = userName;
+        document.getElementById('avatarName').innerText = userName.charAt(0).toUpperCase();
+        loginPage.classList.add('hidden');
+        mainApp.classList.remove('hidden');
+        setTimeout(() => mainApp.classList.remove('opacity-0'), 50);
+        initApp(); // Jalankan aplikasi utama
+      } else {
+        // Belum Login
+        loginPage.classList.remove('hidden');
+        mainApp.classList.add('hidden');
       }
     }
 
-    // 3. LOGIKA UTAMA (Sama seperti sebelumnya)
+    function handleLogin() {
+      const nameInput = document.getElementById('loginName').value.trim();
+      if (nameInput === '') {
+        alert('Masukkan nama kamu dulu ya!');
+        return;
+      }
+      localStorage.setItem('nutriUserName', nameInput);
+      
+      // Animasi transisi
+      const loginPage = document.getElementById('loginPage');
+      loginPage.classList.add('opacity-0');
+      setTimeout(() => {
+        checkLogin();
+      }, 500);
+    }
+
+    function handleLogout() {
+      if(confirm('Yakin ingin keluar profil? Data harianmu tetap aman.')) {
+        localStorage.removeItem('nutriUserName');
+        location.reload(); // Refresh halaman agar kembali ke menu login
+      }
+    }
+
+    // 3. FITUR KAMERA SCANNER
+    function startCamera() {
+      const readerDiv = document.getElementById('reader');
+      const startBtn = document.getElementById('startCamBtn');
+      
+      // Jika kamera sedang menyala, matikan
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear();
+        html5QrcodeScanner = null;
+        readerDiv.classList.add('hidden');
+        startBtn.innerHTML = `Buka Kamera`;
+        startBtn.classList.replace('bg-red-500', 'bg-primary');
+        return;
+      }
+
+      // Nyalakan Kamera
+      readerDiv.classList.remove('hidden');
+      startBtn.innerHTML = `Tutup Kamera`;
+      startBtn.classList.replace('bg-primary', 'bg-red-500');
+
+      html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader",
+        { fps: 10, qrbox: {width: 250, height: 150} },
+        /* verbose= */ false);
+      
+      html5QrcodeScanner.render((decodedText, decodedResult) => {
+        // JIKA BERHASIL SCAN
+        document.getElementById('barcodeInput').value = decodedText; // Isi kolom input
+        html5QrcodeScanner.clear(); // Matikan kamera
+        html5QrcodeScanner = null;
+        readerDiv.classList.add('hidden');
+        startBtn.innerHTML = `Buka Kamera`;
+        startBtn.classList.replace('bg-red-500', 'bg-primary');
+        
+        searchProduct(); // Langsung cari otomatis
+        
+      }, (error) => {
+        // Abaikan error saat sedang mencari fokus
+      });
+    }
+
+    // 4. INIT & FUNGSI LAINNYA
+    function initApp() {
+      checkStreak(); checkNewDay();
+      document.getElementById('gymToggle').checked = isGymDay;
+      updateProgress(); setupTheme(); renderChart();
+    }
+
+    // Navigasi Tabs
+    function switchTab(tabId, btnElement) {
+      document.querySelectorAll('.page-section').forEach(page => page.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-primary'); btn.classList.add('text-gray-400');
+      });
+      btnElement.classList.remove('text-gray-400'); btnElement.classList.add('text-primary');
+      if(tabId === 'page-stats' && chartInstance) chartInstance.resize();
+    }
+
+    // Dark Mode, Streak, Target Logic (Tetap sama)
     function setupTheme() {
       const toggle = document.getElementById('themeToggle');
-      if (localStorage.getItem('theme') === 'dark') {
-        document.documentElement.classList.add('dark');
-        toggle.innerText = '☀️';
-      }
+      if (localStorage.getItem('theme') === 'dark') { document.documentElement.classList.add('dark'); toggle.innerText = '☀️'; }
       toggle.addEventListener('click', () => {
         document.documentElement.classList.toggle('dark');
-        if (document.documentElement.classList.contains('dark')) {
-          localStorage.setItem('theme', 'dark');
-          toggle.innerText = '☀️';
-        } else {
-          localStorage.setItem('theme', 'light');
-          toggle.innerText = '🌙';
-        }
+        if (document.documentElement.classList.contains('dark')) { localStorage.setItem('theme', 'dark'); toggle.innerText = '☀️'; } 
+        else { localStorage.setItem('theme', 'light'); toggle.innerText = '🌙'; }
       });
     }
-
     function checkStreak() {
-      let streak = parseInt(localStorage.getItem('streak') || 0);
-      let lastLogin = localStorage.getItem('lastLogin');
+      let streak = parseInt(localStorage.getItem('streak') || 0); let lastLogin = localStorage.getItem('lastLogin');
       let yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
       let yesterdayStr = yesterday.toISOString().split('T')[0];
-
-      if (lastLogin === yesterdayStr) streak++;
-      else if (lastLogin !== today) streak = 1;
-      
-      localStorage.setItem('streak', streak);
-      localStorage.setItem('lastLogin', today);
+      if (lastLogin === yesterdayStr) streak++; else if (lastLogin !== today) streak = 1;
+      localStorage.setItem('streak', streak); localStorage.setItem('lastLogin', today);
       document.getElementById('streakCount').innerText = streak;
     }
-
     function checkNewDay() {
       if (dailyLog.date !== today) {
         let history = JSON.parse(localStorage.getItem('history')) || [];
@@ -272,124 +355,87 @@
         localStorage.setItem('history', JSON.stringify(history));
         dailyLog = { cal: 0, pro: 0, carb: 0, fat: 0, date: today };
         localStorage.setItem('dailyLog', JSON.stringify(dailyLog));
+        isGymDay = false; localStorage.setItem('isGymDay', 'false');
       }
     }
-
+    function toggleGymMode() {
+      isGymDay = document.getElementById('gymToggle').checked; localStorage.setItem('isGymDay', isGymDay); updateProgress();
+    }
     function searchProduct() {
       const input = document.getElementById('barcodeInput').value.toLowerCase();
       let found = database[input];
-      if (!found) {
-        for (let key in database) {
-          if (database[key].name.toLowerCase().includes(input)) {
-            found = database[key]; break;
-          }
-        }
-      }
-
+      if (!found) { for (let key in database) { if (database[key].name.toLowerCase().includes(input)) { found = database[key]; break; } } }
       if (found) {
         currentScanned = found;
         document.getElementById('resName').innerText = found.name;
-        document.getElementById('resCal').innerText = found.cal;
-        document.getElementById('resPro').innerText = found.pro + "g";
-        document.getElementById('resCarb').innerText = found.carb + "g";
-        document.getElementById('resFat').innerText = found.fat + "g";
-        
+        document.getElementById('resCal').innerText = found.cal; document.getElementById('resPro').innerText = found.pro + "g";
+        document.getElementById('resCarb').innerText = found.carb + "g"; document.getElementById('resFat').innerText = found.fat + "g";
         const badge = document.getElementById('badgeProtein');
         found.pro >= 10 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
         document.getElementById('resultCard').classList.remove('hidden');
-      } else {
-        alert("Produk tidak ditemukan!");
-      }
+      } else { alert("Produk tidak ditemukan!"); }
     }
-
     function addToDaily() {
       if (!currentScanned) return;
       dailyLog.cal += currentScanned.cal; dailyLog.pro += currentScanned.pro;
       dailyLog.carb += currentScanned.carb; dailyLog.fat += currentScanned.fat;
-      localStorage.setItem('dailyLog', JSON.stringify(dailyLog));
-      updateProgress();
-      document.getElementById('resultCard').classList.add('hidden');
-      document.getElementById('barcodeInput').value = '';
-      alert(`${currentScanned.name} dicatat! Cek halaman Target.`);
+      localStorage.setItem('dailyLog', JSON.stringify(dailyLog)); updateProgress();
+      document.getElementById('resultCard').classList.add('hidden'); document.getElementById('barcodeInput').value = '';
+      alert(`${currentScanned.name} dicatat!`);
     }
-
     function updateProgress() {
-      const calPercent = Math.min((dailyLog.cal / targets.cal) * 100, 100);
-      const proPercent = Math.min((dailyLog.pro / targets.pro) * 100, 100);
-      document.getElementById('calBar').style.width = calPercent + "%";
-      document.getElementById('proBar').style.width = proPercent + "%";
-      document.getElementById('calText').innerText = `${dailyLog.cal} / ${targets.cal} kcal`;
-      document.getElementById('proText').innerText = `${dailyLog.pro} / ${targets.pro} g`;
+      const activeCalTarget = isGymDay ? targets.cal + 300 : targets.cal;
+      const activeProTarget = isGymDay ? targets.pro + 20 : targets.pro;
+      const calPercent = Math.min((dailyLog.cal / activeCalTarget) * 100, 100);
+      const proPercent = Math.min((dailyLog.pro / activeProTarget) * 100, 100);
+      document.getElementById('calBar').style.width = calPercent + "%"; document.getElementById('proBar').style.width = proPercent + "%";
+      document.getElementById('calText').innerText = `${dailyLog.cal} / ${activeCalTarget} kcal`;
+      document.getElementById('proText').innerText = `${dailyLog.pro} / ${activeProTarget} g`;
     }
-
     function toggleCalc() { document.getElementById('calcBox').classList.toggle('hidden'); }
     function calculateTDEE() {
-      const weight = document.getElementById('calcWeight').value;
-      const height = document.getElementById('calcHeight').value;
+      const weight = document.getElementById('calcWeight').value; const height = document.getElementById('calcHeight').value;
       if (weight && height) {
-        const bmr = (10 * weight) + (6.25 * height) - (5 * 16) + 5; 
-        const tdee = Math.round(bmr * 1.55); 
-        const proTarget = Math.round(weight * 1.8); 
-        targets = { cal: tdee, pro: proTarget };
-        localStorage.setItem('targets', JSON.stringify(targets));
-        updateProgress(); toggleCalc();
-        alert(`Target harian diperbarui!\nKalori: ${tdee} kcal\nProtein: ${proTarget} g`);
+        const bmr = (10 * weight) + (6.25 * height) - (5 * 16) + 5; const tdee = Math.round(bmr * 1.55); const proTarget = Math.round(weight * 1.8); 
+        targets = { cal: tdee, pro: proTarget }; localStorage.setItem('targets', JSON.stringify(targets)); updateProgress(); toggleCalc();
+        alert(`Target diperbarui!\nKalori: ${tdee}\nProtein: ${proTarget}g`);
       }
     }
-
     function addToCompare() {
-      if (!currentScanned) return;
-      if (compareList.length >= 2) return alert("Maksimal 2 produk!");
-      compareList.push(currentScanned);
-      renderCompare();
-      document.getElementById('resultCard').classList.add('hidden');
-      alert('Ditambahkan! Buka menu "Bandingkan" di bawah.');
+      if (!currentScanned) return; if (compareList.length >= 2) return alert("Maksimal 2 produk!");
+      compareList.push(currentScanned); renderCompare(); document.getElementById('resultCard').classList.add('hidden'); alert('Ditambahkan ke Bandingkan!');
     }
-
     function renderCompare() {
-      const grid = document.getElementById('compareGrid');
-      const emptyMsg = document.getElementById('compareEmpty');
-      if (compareList.length === 0) {
-        grid.classList.add('hidden'); emptyMsg.classList.remove('hidden'); return;
-      }
-      grid.classList.remove('hidden'); emptyMsg.classList.add('hidden');
-      grid.innerHTML = '';
+      const grid = document.getElementById('compareGrid'); const emptyMsg = document.getElementById('compareEmpty');
+      if (compareList.length === 0) { grid.classList.add('hidden'); emptyMsg.classList.remove('hidden'); return; }
+      grid.classList.remove('hidden'); emptyMsg.classList.add('hidden'); grid.innerHTML = '';
       compareList.forEach(item => {
-        grid.innerHTML += `
-          <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-xl border border-primary text-center">
+        grid.innerHTML += `<div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-xl border border-primary text-center">
             <p class="font-bold text-sm mb-2 h-10 overflow-hidden">${item.name}</p>
             <p class="text-xs text-gray-500">Kalori: <span class="font-bold text-red-500">${item.cal}</span></p>
             <p class="text-xs text-gray-500">Protein: <span class="font-bold text-primary">${item.pro}g</span></p>
-            <p class="text-xs text-gray-500">Lemak: <span class="font-bold text-orange-500">${item.fat}g</span></p>
-          </div>
-        `;
+          </div>`;
       });
     }
     function clearCompare() { compareList = []; renderCompare(); }
-
     function exportWA() {
-      const text = `*Catatan Nutrisi (NutriScan)*\n🔥 Streak: ${localStorage.getItem('streak')} Hari\n📊 Kalori: ${dailyLog.cal}/${targets.cal} kcal\n💪 Protein: ${dailyLog.pro}/${targets.pro} g`;
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+      let cT = isGymDay ? targets.cal + 300 : targets.cal; let pT = isGymDay ? targets.pro + 20 : targets.pro;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`*Nutrisi Harian (NutriScan)*\n🔥 Streak: ${localStorage.getItem('streak')} Hari\n📊 Kalori: ${dailyLog.cal} /${cT}\n💪 Protein: ${dailyLog.pro} /${pT}g`)}`, '_blank');
     }
-
     function renderChart() {
       let history = JSON.parse(localStorage.getItem('history')) || [];
       if (history.length === 0) history = [{ date: "H-3", cal: 1800, pro: 70 }, { date: "H-2", cal: 2100, pro: 85 }, { date: "H-1", cal: 1950, pro: 80 }];
       const ctx = document.getElementById('weeklyChart').getContext('2d');
       chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: history.map(h => h.date),
-          datasets: [
+        type: 'bar', data: { labels: history.map(h => h.date), datasets: [
             { label: 'Protein (g)', data: history.map(h => h.pro), backgroundColor: '#3b82f6', type: 'line', tension: 0.3 },
-            { label: 'Kalori (kcal)', data: history.map(h => h.cal), backgroundColor: '#10b981', borderRadius: 4 }
-          ]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
+            { label: 'Kalori', data: history.map(h => h.cal), backgroundColor: '#10b981', borderRadius: 4 }
+        ]}, options: { responsive: true, maintainAspectRatio: false }
       });
     }
 
-    initApp();
+    // JALANKAN SAAT PERTAMA KALI WEB DIBUKA
+    checkLogin();
   </script>
 </body>
 </html>
