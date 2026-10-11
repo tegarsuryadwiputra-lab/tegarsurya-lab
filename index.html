@@ -111,9 +111,43 @@
     <script>
         const mockProducts = {
             "8996001330036": { name: "Chitato Sapi Panggang (68g)", image: "https://images.openfoodfacts.org/images/products/899/600/133/0036/front_id.3.400.jpg", kalori: 360, protein: 4, karbo: 40, lemak: 20 },
+            "8996001330357": { name: "Chitato Lite (68g)", image: "https://images.openfoodfacts.org/images/products/899/600/133/0357/front_id.3.400.jpg", kalori: 350, protein: 3, karbo: 42, lemak: 19 },
+            "8992753111206": { name: "Taro Net Potato BBQ (36g)", image: "https://images.openfoodfacts.org/images/products/899/275/311/1206/front_id.3.400.jpg", kalori: 180, protein: 2, karbo: 22, lemak: 9 },
+            "8996001320013": { name: "Qtela Keripik Singkong Original (60g)", image: "https://images.openfoodfacts.org/images/products/899/600/132/0013/front_id.3.400.jpg", kalori: 300, protein: 2, karbo: 38, lemak: 15 },
+            "8996001320037": { name: "Qtela Keripik Singkong Balado (60g)", image: "https://images.openfoodfacts.org/images/products/899/600/132/0037/front_id.3.400.jpg", kalori: 310, protein: 2, karbo: 39, lemak: 16 },
+            "8992952956295": { name: "Indomaret Mix Nuts (30g)", image: "https://images.openfoodfacts.org/images/products/899/295/295/6295/front_id.3.400.jpg", kalori: 190, protein: 5, karbo: 7, lemak: 16 },
+            "8994096223905": { name: "Indomaret Kacang Almond (30g)", image: "https://images.openfoodfacts.org/images/products/899/409/622/3905/front_id.3.400.jpg", kalori: 170, protein: 6, karbo: 6, lemak: 14 },
+            "8992753032129": { name: "SilverQueen Chocolate Cashew (58g)", image: "https://images.openfoodfacts.org/images/products/899/275/303/2129/front_id.3.400.jpg", kalori: 310, protein: 5, karbo: 31, lemak: 18 },
+            "8992753033102": { name: "SilverQueen Chunky Bar (30g)", image: "https://images.openfoodfacts.org/images/products/899/275/303/3102/front_id.3.400.jpg", kalori: 160, protein: 2, karbo: 16, lemak: 10 },
+            "8996001340011": { name: "Beng-beng Regular (20g)", image: "https://images.openfoodfacts.org/images/products/899/600/134/0011/front_id.3.400.jpg", kalori: 100, protein: 1, karbo: 14, lemak: 4 },
             "8998000000201": { name: "Tango Wafer Cokelat (130g)", image: "https://images.openfoodfacts.org/images/products/899/800/000/0201/front_id.3.400.jpg", kalori: 630, protein: 7, karbo: 88, lemak: 27 },
+            "8996001380017": { name: "Roma Malkist Crackers (105g)", image: "https://images.openfoodfacts.org/images/products/899/600/138/0017/front_id.3.400.jpg", kalori: 450, protein: 8, karbo: 70, lemak: 15 },
+            "8992753075102": { name: "Pocky Chocolate (47g)", image: "https://images.openfoodfacts.org/images/products/899/275/307/5102/front_id.3.400.jpg", kalori: 220, protein: 4, karbo: 32, lemak: 9 },
+            "8997001430018": { name: "Sari Roti Roti Tawar Special (350g)", image: "https://images.openfoodfacts.org/images/products/899/700/143/0018/front_id.3.400.jpg", kalori: 900, protein: 24, karbo: 160, lemak: 14 },
+            "8886013700104": { name: "Mie Gemez Enaak (16g)", image: "https://images.openfoodfacts.org/images/products/888/601/370/0104/front_id.3.400.jpg", kalori: 80, protein: 1, karbo: 11, lemak: 4 },
+            "089686010947": { name: "Indomie Goreng Special (85g)", image: "https://images.openfoodfacts.org/images/products/089/686/010/947/front_id.3.400.jpg", kalori: 380, protein: 8, karbo: 54, lemak: 14 },
+            "089686014181": { name: "Indomie Soto Mie (70g)", image: "https://images.openfoodfacts.org/images/products/089/686/014/181/front_id.3.400.jpg", kalori: 340, protein: 7, karbo: 48, lemak: 13 },
+            "8998866200578": { name: "Mie Sedaap Goreng (90g)", image: "https://images.openfoodfacts.org/images/products/899/886/620/0578/front_id.3.400.jpg", kalori: 390, protein: 8, karbo: 56, lemak: 15 },
+            "8992753112234": { name: "Pop Mie Ayam Bawang (75g)", image: "https://images.openfoodfacts.org/images/products/899/275/311/2234/front_id.3.400.jpg", kalori: 330, protein: 6, karbo: 46, lemak: 13 },
+            "8992753112265": { name: "Pop Mie Goreng Special (80g)", image: "https://images.openfoodfacts.org/images/products/899/275/311/2265/front_id.3.400.jpg", kalori: 360, protein: 7, karbo: 50, lemak: 15 },
+            "8997214560012": { name: "Lemonilo Mie Instan Goreng (77g)", image: "https://images.openfoodfacts.org/images/products/899/721/456/0012/front_id.3.400.jpg", kalori: 320, protein: 7, karbo: 52, lemak: 9 },
+            "8801073111655": { name: "Samyang Hot Chicken Flavor Ramen (140g)", image: "https://images.openfoodfacts.org/images/products/880/107/311/1655/front_id.3.400.jpg", kalori: 550, protein: 12, karbo: 85, lemak: 16 },
+            "8991388102123": { name: "Aqua Air Mineral (600ml)", image: "https://images.openfoodfacts.org/images/products/899/138/810/2123/front_id.3.400.jpg", kalori: 0, protein: 0, karbo: 0, lemak: 0 },
+            "8991388102147": { name: "Aqua Air Mineral (1500ml)", image: "https://images.openfoodfacts.org/images/products/899/138/810/2147/front_id.3.400.jpg", kalori: 0, protein: 0, karbo: 0, lemak: 0 },
+            "8997033810017": { name: "Le Minerale Air Mineral (600ml)", image: "https://images.openfoodfacts.org/images/products/899/703/381/0017/front_id.3.400.jpg", kalori: 0, protein: 0, karbo: 0, lemak: 0 },
             "8996001600146": { name: "Teh Pucuk Harum (350ml)", image: "https://images.openfoodfacts.org/images/products/899/600/160/0146/front_id.3.400.jpg", kalori: 120, protein: 0, karbo: 30, lemak: 0 },
-            "089686010947": { name: "Indomie Goreng Special (85g)", image: "https://images.openfoodfacts.org/images/products/089/686/010/947/front_id.3.400.jpg", kalori: 380, protein: 8, karbo: 54, lemak: 14 }
+            "8996001600184": { name: "Teh Pucuk Harum (500ml)", image: "https://images.openfoodfacts.org/images/products/899/600/160/0184/front_id.3.400.jpg", kalori: 170, protein: 0, karbo: 42, lemak: 0 },
+            "8991002101036": { name: "Teh Botol Sosro (450ml)", image: "https://images.openfoodfacts.org/images/products/899/100/210/1036/front_id.3.400.jpg", kalori: 150, protein: 0, karbo: 38, lemak: 0 },
+            "8992753012015": { name: "Ultra Milk UHT Cokelat (250ml)", image: "https://images.openfoodfacts.org/images/products/899/275/301/2015/front_id.3.400.jpg", kalori: 160, protein: 7, karbo: 26, lemak: 4 },
+            "8992753011018": { name: "Ultra Milk UHT Full Cream (250ml)", image: "https://images.openfoodfacts.org/images/products/899/275/301/1018/front_id.3.400.jpg", kalori: 140, protein: 8, karbo: 14, lemak: 5 },
+            "8992753100101": { name: "Frisian Flag UHT Cokelat Kaleng (225ml)", image: "https://images.openfoodfacts.org/images/products/899/275/310/0101/front_id.3.400.jpg", kalori: 150, protein: 4, karbo: 23, lemak: 4.5 },
+            "8999999033411": { name: "Bear Brand Susu Steril (189ml)", image: "https://images.openfoodfacts.org/images/products/899/999/903/3411/front_id.3.400.jpg", kalori: 120, protein: 6, karbo: 9, lemak: 7 },
+            "8997025161028": { name: "Cimory Fresh Milk Cokelat (250ml)", image: "https://images.openfoodfacts.org/images/products/899/702/516/1028/front_id.3.400.jpg", kalori: 150, protein: 6, karbo: 22, lemak: 4 },
+            "8998866100120": { name: "Good Day Cappuccino Botol (250ml)", image: "https://images.openfoodfacts.org/images/products/899/886/610/0120/front_id.3.400.jpg", kalori: 140, protein: 2, karbo: 24, lemak: 3 },
+            "8997232230018": { name: "Kopi Kenangan Mantan Botol (220ml)", image: "https://images.openfoodfacts.org/images/products/899/723/223/0018/front_id.3.400.jpg", kalori: 130, protein: 3, karbo: 20, lemak: 4 },
+            "8999999037327": { name: "Milo Activ-Go UHT (180ml)", image: "https://images.openfoodfacts.org/images/products/899/999/903/3727/front_id.3.400.jpg", kalori: 110, protein: 3, karbo: 18, lemak: 3 },
+            "8993988111116": { name: "Coca Cola Botol (390ml)", image: "https://images.openfoodfacts.org/images/products/899/398/811/1116/front_id.3.400.jpg", kalori: 150, protein: 0, karbo: 39, lemak: 0 },
+            "8993988111222": { name: "Sprite Botol (390ml)", image: "https://images.openfoodfacts.org/images/products/899/398/811/1222/front_id.3.400.jpg", kalori: 140, protein: 0, karbo: 36, lemak: 0 }
         };
 
         let dailyIntake = { cal: 0, carb: 0, fat: 0 };
@@ -149,13 +183,14 @@
                 let data = await res.json();
                 if (data.status === 1 && data.product) {
                     let p = data.product;
+                    let nut = p.nutriments || {};
                     displayProduct({
                         name: p.product_name_id || p.product_name || `Produk ${code}`,
                         image: p.image_front_url || "",
-                        kalori: Math.round(p.nutriments?.['energy-kcal_100g'] || 0),
-                        protein: Math.round(p.nutriments?.['protein_100g'] || 0),
-                        karbo: Math.round(p.nutriments?.['carbohydrates_100g'] || 0),
-                        lemak: Math.round(p.nutriments?.['fat_100g'] || 0),
+                        kalori: Math.round(nut['energy-kcal_100g'] || 0),
+                        protein: Math.round(nut['protein_100g'] || 0),
+                        karbo: Math.round(nut['carbohydrates_100g'] || 0),
+                        lemak: Math.round(nut['fat_100g'] || 0),
                         barcode: code
                     });
                     return;
@@ -172,7 +207,7 @@
         document.getElementById('addLogBtn').addEventListener('click', () => {
             if (!currentProduct) return;
             dailyIntake.cal += currentProduct.kalori;
-            dailyIntake.carb += currentProperty ? currentProperty.karbo : currentProduct.karbo;
+            dailyIntake.carb += currentProduct.karbo;
             dailyIntake.fat += currentProduct.lemak;
             document.getElementById('totalCal').innerHTML = `${dailyIntake.cal} <span class="text-xs">kcal</span>`;
             document.getElementById('totalCarb').innerHTML = `${dailyIntake.carb} <span class="text-xs">g</span>`;
