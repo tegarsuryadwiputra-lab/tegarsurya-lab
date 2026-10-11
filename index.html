@@ -23,41 +23,39 @@
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 pb-24">
 
-  <!-- ================= LOGIN PAGE (Versi Simpel - Nama Saja) ================= -->
-  <div id="loginPage" class="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col items-center justify-center px-6 transition-all duration-300">
+  <!-- ================= LOGIN PAGE ================= -->
+  <div id="loginPage" class="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col items-center justify-center px-6 transition-opacity duration-500">
     <div class="bg-primary text-white p-4 rounded-2xl mb-4 shadow-lg">
       <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
     </div>
     <h1 class="text-3xl font-bold text-primary mb-2">NutriScan</h1>
     <p class="text-gray-500 dark:text-gray-400 mb-8 text-center text-sm">Lacak nutrisi harianmu dari produk Indomaret dengan mudah.</p>
     
-    <div class="w-full max-w-sm bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border dark:border-gray-700 shadow-sm text-center">
+    <div class="w-full max-w-sm bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border dark:border-gray-700 shadow-sm">
       <h2 class="font-bold mb-4 text-lg">Sign In Profil</h2>
-      
-      <input type="text" id="loginName" placeholder="Masukkan Nama Kamu..." class="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary mb-4 text-sm text-center">
-      
-      <button type="button" onclick="handleLogin()" class="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Masuk Aplikasi</button>
-      <p class="text-[10px] text-gray-400 text-center mt-4">Data tersimpan aman secara lokal.</p>
+      <input type="text" id="loginName" placeholder="Masukkan Nama Kamu..." class="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary mb-4">
+      <button onclick="handleLogin()" class="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Mulai Sekarang</button>
     </div>
   </div>
 
   <!-- ================= MAIN APP ================= -->
-  <div id="mainApp" class="hidden transition-all duration-300">
+  <div id="mainApp" class="hidden opacity-0 transition-opacity duration-500">
+    
     <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
       <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
         <div class="flex items-center gap-2">
-          <div class="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center font-bold text-base shadow-sm" id="avatarName">N</div>
+          <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm" id="avatarName">N</div>
           <div>
             <p class="text-[10px] text-gray-500 font-bold -mb-1">Halo,</p>
             <h1 class="font-bold text-base text-primary leading-tight" id="greetName">User</h1>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <div class="flex items-center text-orange-500 font-bold bg-orange-100 dark:bg-gray-700 px-2 py-1 rounded-full text-sm shadow-inner">
-            🔥 <span id="streakCount">0</span>
+          <div class="flex items-center text-orange-500 font-bold bg-orange-100 dark:bg-gray-700 px-2 py-1 rounded-full text-sm">
+            🔥 <span id="streakCount">0</span> Hari
           </div>
           <button id="themeToggle" class="p-2 bg-gray-100 dark:bg-gray-700 rounded-full">🌙</button>
-          <button onclick="handleLogout()" class="p-2 text-red-500 bg-red-50 dark:bg-gray-700 rounded-full" title="Keluar Akun">
+          <button onclick="handleLogout()" class="p-2 text-red-500 bg-red-50 dark:bg-gray-700 rounded-full">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
           </button>
         </div>
@@ -65,6 +63,7 @@
     </header>
 
     <main class="max-w-md mx-auto px-4 mt-4 relative">
+
       <!-- HALAMAN 1: SCAN -->
       <section id="page-scan" class="page-section">
         <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
@@ -75,12 +74,15 @@
               Buka Kamera
             </button>
           </div>
-          <div id="reader" class="hidden mb-3 bg-gray-100 dark:bg-gray-900 rounded-xl border border-dashed border-gray-300"></div>
+          
+          <div id="reader" class="hidden mb-3 bg-gray-100 dark:bg-gray-900 rounded-xl"></div>
+          
           <div class="relative flex py-2 items-center">
             <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
             <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">Atau ketik manual</span>
             <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
           </div>
+
           <div class="flex gap-2 mt-2">
             <input type="text" id="barcodeInput" placeholder="Ketik Kode / Nama..." class="flex-1 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary w-full text-sm">
             <button onclick="searchProduct()" class="bg-gray-200 dark:bg-gray-600 dark:text-white px-5 py-3 rounded-xl font-bold text-sm">Cari</button>
@@ -108,18 +110,26 @@
       <!-- HALAMAN 2: TARGET & JADWAL -->
       <section id="page-target" class="page-section hidden">
         <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
+          
+          <!-- Fitur Jadwal Kalender Mingguan -->
           <div class="mb-5 border-b dark:border-gray-700 pb-4">
             <div class="flex justify-between items-center mb-3">
               <h3 class="font-bold text-sm">📅 Jadwal Latihan Mingguan</h3>
               <span class="text-[10px] text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">Ketuk untuk ubah</span>
             </div>
-            <div id="scheduleGrid" class="grid grid-cols-7 gap-1"></div>
+            
+            <div id="scheduleGrid" class="grid grid-cols-7 gap-1">
+              <!-- Diisi otomatis oleh JavaScript -->
+            </div>
             <p id="todayStatusText" class="text-xs text-center mt-3 text-primary font-bold">Hari ini: Mode Latihan 🏋️</p>
           </div>
+
+          <!-- Kalkulator & Progress -->
           <div class="flex justify-between items-center mb-4">
             <h2 class="font-bold text-lg">Target Hari Ini</h2>
             <button onclick="toggleCalc()" class="text-xs text-primary bg-green-50 dark:bg-gray-700 px-3 py-1.5 rounded-lg font-bold">Ubah Dasar</button>
           </div>
+          
           <div id="calcBox" class="hidden mb-5 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm border dark:border-gray-600">
             <p class="font-bold mb-3 text-center">Hitung Base Target (Rest Day)</p>
             <div class="grid grid-cols-2 gap-3 mb-3">
@@ -128,6 +138,7 @@
             </div>
             <button onclick="calculateTDEE()" class="w-full bg-primary text-white rounded-lg p-3 font-bold shadow">Simpan Target</button>
           </div>
+          
           <div>
             <div class="flex justify-between text-sm mb-1">
               <span class="font-medium">Kalori</span>
@@ -147,7 +158,7 @@
         </div>
       </section>
 
-      <!-- HALAMAN 3 & 4 -->
+      <!-- HALAMAN 3 & 4 (Bandingkan & Grafik) -->
       <section id="page-compare" class="page-section hidden">
         <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
           <div class="flex justify-between items-center mb-4">
@@ -168,37 +179,37 @@
           <div class="relative w-full h-56"><canvas id="weeklyChart"></canvas></div>
         </div>
       </section>
+
     </main>
 
-    <!-- NAVIGASI BAWAH -->
     <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border-t dark:border-gray-700 flex justify-around p-3 pb-4 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
       <button onclick="switchTab('page-scan', this)" class="nav-btn flex flex-col items-center text-primary w-1/4">
         <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        <span class="text-[10px] font-bold mt-1">Scan</span>
+        <span class="text-[10px] font-bold">Scan</span>
       </button>
       <button onclick="switchTab('page-target', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
         <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-        <span class="text-[10px] font-bold mt-1">Target</span>
+        <span class="text-[10px] font-bold">Target</span>
       </button>
       <button onclick="switchTab('page-compare', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
         <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-        <span class="text-[10px] font-bold mt-1">Bandingkan</span>
+        <span class="text-[10px] font-bold">Bandingkan</span>
       </button>
       <button onclick="switchTab('page-stats', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
         <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
-        <span class="text-[10px] font-bold mt-1">Grafik</span>
+        <span class="text-[10px] font-bold">Grafik</span>
       </button>
     </nav>
   </div> 
 
   <script>
-    // 1. DATABASE
+    // DATABASE
     const database = {
       "8992753033102": { name: "SilverQueen Chunky", cal: 170, pro: 3, carb: 18, fat: 10 },
       "8996001340011": { name: "Beng-beng Regular", cal: 110, pro: 1, carb: 16, fat: 5 },
       "8992753075102": { name: "Pocky Choco", cal: 100, pro: 2, carb: 14, fat: 4 },
       "8999000000002": { name: "Soyjoy Crispy", cal: 130, pro: 4, carb: 15, fat: 6 },
-      "8997001430018": { name: "Sari Roti Tawar", cal: 900, pro: 24, carb: 160, fat: 14 },
+      "8997001430018": { name: "Sari Roti Tawar Spesial", cal: 900, pro: 24, carb: 160, fat: 14 },
       "089686010947": { name: "Indomie Goreng", cal: 380, pro: 8, carb: 54, fat: 14 },
       "8996001600146": { name: "Teh Pucuk Harum", cal: 80, pro: 0, carb: 20, fat: 0 },
       "8992753011018": { name: "Ultra Milk Low Fat", cal: 110, pro: 8, carb: 15, fat: 2 },
@@ -208,68 +219,108 @@
       "2000000000003": { name: "Dada Ayam Goreng", cal: 250, pro: 25, carb: 5, fat: 12 }
     };
 
-    // Fungsi Aman Ambil Data Lokal
-    function getSafeJSON(key, defaultVal) {
-      try { const val = localStorage.getItem(key); return val ? JSON.parse(val) : defaultVal; } 
-      catch (e) { return defaultVal; }
-    }
-
     let today = new Date().toISOString().split('T')[0];
-    let dailyLog = getSafeJSON('dailyLog', { cal: 0, pro: 0, carb: 0, fat: 0, date: today });
-    let targets = getSafeJSON('targets', { cal: 2000, pro: 85 });
-    let gymSchedule = getSafeJSON('gymSchedule', [false, true, false, true, false, true, false]);
+    let dailyLog = JSON.parse(localStorage.getItem('dailyLog')) || { cal: 0, pro: 0, carb: 0, fat: 0, date: today };
+    let targets = JSON.parse(localStorage.getItem('targets')) || { cal: 2000, pro: 85 }; 
     
-    let isGymDay = false; 
+    // Array Jadwal Mingguan (0=Minggu, 1=Senin, dst). Default: Sen, Rab, Jum nge-gym.
+    let gymSchedule = JSON.parse(localStorage.getItem('gymSchedule')) || [false, true, false, true, false, true, false];
+    let isGymDay = false; // Akan dikalkulasi dari gymSchedule
+    
     let currentScanned = null;
     let compareList = [];
     let chartInstance = null;
     let html5QrcodeScanner = null;
 
-    // SISTEM LOGIN (HANYA NAMA)
     function checkLogin() {
       const userName = localStorage.getItem('nutriUserName');
-      const loginPage = document.getElementById('loginPage');
-      const mainApp = document.getElementById('mainApp');
-
-      if (userName && userName.trim() !== "") {
+      if (userName) {
         document.getElementById('greetName').innerText = userName;
         document.getElementById('avatarName').innerText = userName.charAt(0).toUpperCase();
-        
-        loginPage.style.display = 'none';
-        mainApp.classList.remove('hidden');
-        
-        try { initApp(); } catch (err) { console.error("Error App:", err); }
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        setTimeout(() => document.getElementById('mainApp').classList.remove('opacity-0'), 50);
+        initApp();
       } else {
-        loginPage.style.display = 'flex';
-        mainApp.classList.add('hidden');
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('mainApp').classList.add('hidden');
       }
     }
 
     function handleLogin() {
       const nameInput = document.getElementById('loginName').value.trim();
-      if (nameInput === '') {
-        alert('Tolong ketik nama panggilanmu dulu ya!');
-        return;
+      if (nameInput === '') return alert('Masukkan nama kamu dulu ya!');
+      localStorage.setItem('nutriUserName', nameInput);
+      document.getElementById('loginPage').classList.add('opacity-0');
+      setTimeout(checkLogin, 500);
+    }
+    function handleLogout() {
+      if(confirm('Yakin ingin keluar profil? Data harianmu tetap aman.')) {
+        localStorage.removeItem('nutriUserName'); location.reload();
+      }
+    }
+
+    function startCamera() {
+      const readerDiv = document.getElementById('reader');
+      const startBtn = document.getElementById('startCamBtn');
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear(); html5QrcodeScanner = null;
+        readerDiv.classList.add('hidden'); startBtn.innerHTML = `Buka Kamera`; startBtn.classList.replace('bg-red-500', 'bg-primary'); return;
+      }
+      readerDiv.classList.remove('hidden'); startBtn.innerHTML = `Tutup Kamera`; startBtn.classList.replace('bg-primary', 'bg-red-500');
+      html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 150} }, false);
+      html5QrcodeScanner.render((decodedText) => {
+        document.getElementById('barcodeInput').value = decodedText; 
+        html5QrcodeScanner.clear(); html5QrcodeScanner = null;
+        readerDiv.classList.add('hidden'); startBtn.innerHTML = `Buka Kamera`; startBtn.classList.replace('bg-red-500', 'bg-primary');
+        searchProduct();
+      }, (err) => {});
+    }
+
+    // RENDER JADWAL MINGGUAN
+    function renderSchedule() {
+      const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+      const container = document.getElementById('scheduleGrid');
+      const todayIndex = new Date().getDay();
+      
+      container.innerHTML = '';
+      days.forEach((day, index) => {
+        const isGym = gymSchedule[index];
+        const isToday = index === todayIndex;
+        container.innerHTML += `
+          <button onclick="toggleDay(${index})" class="flex flex-col items-center py-2 rounded-lg border transition-colors ${isGym ? 'bg-primary text-white border-primary' : 'bg-gray-50 dark:bg-gray-700 text-gray-400 border-gray-200 dark:border-gray-600'} ${isToday ? 'ring-2 ring-orange-400 ring-offset-1 dark:ring-offset-gray-800' : ''}">
+            <span class="text-[10px] font-bold mb-1">${day}</span>
+            <span class="text-sm">${isGym ? '🏋️' : '🛌'}</span>
+          </button>
+        `;
+      });
+
+      // Set mode hari ini secara otomatis
+      isGymDay = gymSchedule[todayIndex];
+      const statusText = document.getElementById('todayStatusText');
+      if(isGymDay) {
+        statusText.innerText = "Hari ini: Mode Latihan 🏋️ (+300 Kcal, +20g Pro)";
+        statusText.className = "text-xs text-center mt-3 text-primary font-bold";
+      } else {
+        statusText.innerText = "Hari ini: Mode Istirahat 🛌 (Target Normal)";
+        statusText.className = "text-xs text-center mt-3 text-gray-500 font-bold";
       }
       
-      localStorage.setItem('nutriUserName', nameInput);
-      checkLogin(); // Langsung eksekusi tanpa delay
+      updateProgress();
     }
 
-    function handleLogout() {
-      if(confirm('Yakin ingin keluar?')) {
-        localStorage.removeItem('nutriUserName'); 
-        location.reload();
-      }
+    function toggleDay(index) {
+      gymSchedule[index] = !gymSchedule[index];
+      localStorage.setItem('gymSchedule', JSON.stringify(gymSchedule));
+      renderSchedule(); // Render ulang dan otomatis update progress bar
     }
 
-    // INISIALISASI
     function initApp() {
       checkStreak(); checkNewDay();
-      renderSchedule(); setupTheme(); renderChart();
+      renderSchedule(); // Render kalender jadwal
+      setupTheme(); renderChart();
     }
 
-    // NAVIGASI
     function switchTab(tabId, btnElement) {
       document.querySelectorAll('.page-section').forEach(page => page.classList.add('hidden'));
       document.getElementById(tabId).classList.remove('hidden');
@@ -291,14 +342,15 @@
     function checkStreak() {
       let streak = parseInt(localStorage.getItem('streak') || 0); let lastLogin = localStorage.getItem('lastLogin');
       let yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-      if (lastLogin === yesterday.toISOString().split('T')[0]) streak++; else if (lastLogin !== today) streak = 1;
+      let yesterdayStr = yesterday.toISOString().split('T')[0];
+      if (lastLogin === yesterdayStr) streak++; else if (lastLogin !== today) streak = 1;
       localStorage.setItem('streak', streak); localStorage.setItem('lastLogin', today);
       document.getElementById('streakCount').innerText = streak;
     }
 
     function checkNewDay() {
       if (dailyLog.date !== today) {
-        let history = getSafeJSON('history', []);
+        let history = JSON.parse(localStorage.getItem('history')) || [];
         history.push({ date: dailyLog.date, cal: dailyLog.cal, pro: dailyLog.pro });
         if (history.length > 7) history.shift();
         localStorage.setItem('history', JSON.stringify(history));
@@ -307,39 +359,19 @@
       }
     }
 
-    function renderSchedule() {
-      const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-      const container = document.getElementById('scheduleGrid');
-      const todayIndex = new Date().getDay();
-      container.innerHTML = '';
-      days.forEach((day, index) => {
-        const isGym = gymSchedule[index]; const isToday = index === todayIndex;
-        container.innerHTML += `
-          <button onclick="toggleDay(${index})" class="flex flex-col items-center py-2 rounded-lg border transition-colors ${isGym ? 'bg-primary text-white border-primary shadow-sm' : 'bg-gray-50 dark:bg-gray-700 text-gray-400 border-gray-200 dark:border-gray-600'} ${isToday ? 'ring-2 ring-orange-400 ring-offset-1 dark:ring-offset-gray-800' : ''}">
-            <span class="text-[10px] font-bold mb-1">${day}</span><span class="text-sm">${isGym ? '🏋️' : '🛌'}</span>
-          </button>`;
-      });
-      isGymDay = gymSchedule[todayIndex];
-      const statusText = document.getElementById('todayStatusText');
-      statusText.innerText = isGymDay ? "Hari ini: Mode Latihan 🏋️ (+300 Kcal, +20g Pro)" : "Hari ini: Mode Istirahat 🛌 (Target Normal)";
-      statusText.className = isGymDay ? "text-xs text-center mt-3 text-primary font-bold" : "text-xs text-center mt-3 text-gray-500 font-bold";
-      updateProgress();
-    }
-
-    function toggleDay(index) {
-      gymSchedule[index] = !gymSchedule[index]; localStorage.setItem('gymSchedule', JSON.stringify(gymSchedule)); renderSchedule();
-    }
-
     function searchProduct() {
-      const input = document.getElementById('barcodeInput').value.toLowerCase(); let found = database[input];
+      const input = document.getElementById('barcodeInput').value.toLowerCase();
+      let found = database[input];
       if (!found) { for (let key in database) { if (database[key].name.toLowerCase().includes(input)) { found = database[key]; break; } } }
       if (found) {
-        currentScanned = found; document.getElementById('resName').innerText = found.name;
+        currentScanned = found;
+        document.getElementById('resName').innerText = found.name;
         document.getElementById('resCal').innerText = found.cal; document.getElementById('resPro').innerText = found.pro + "g";
         document.getElementById('resCarb').innerText = found.carb + "g"; document.getElementById('resFat').innerText = found.fat + "g";
-        document.getElementById('badgeProtein').className = found.pro >= 10 ? 'bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded border border-yellow-300 whitespace-nowrap' : 'hidden';
+        const badge = document.getElementById('badgeProtein');
+        found.pro >= 10 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
         document.getElementById('resultCard').classList.remove('hidden');
-      } else { alert("Produk tidak ditemukan di database!"); }
+      } else { alert("Produk tidak ditemukan!"); }
     }
 
     function addToDaily() {
@@ -348,13 +380,15 @@
       dailyLog.carb += currentScanned.carb; dailyLog.fat += currentScanned.fat;
       localStorage.setItem('dailyLog', JSON.stringify(dailyLog)); updateProgress();
       document.getElementById('resultCard').classList.add('hidden'); document.getElementById('barcodeInput').value = '';
-      alert(`${currentScanned.name} berhasil dicatat!`);
+      alert(`${currentScanned.name} dicatat!`);
     }
 
     function updateProgress() {
-      const activeCalTarget = isGymDay ? targets.cal + 300 : targets.cal; const activeProTarget = isGymDay ? targets.pro + 20 : targets.pro;
-      document.getElementById('calBar').style.width = Math.min((dailyLog.cal / activeCalTarget) * 100, 100) + "%"; 
-      document.getElementById('proBar').style.width = Math.min((dailyLog.pro / activeProTarget) * 100, 100) + "%";
+      const activeCalTarget = isGymDay ? targets.cal + 300 : targets.cal;
+      const activeProTarget = isGymDay ? targets.pro + 20 : targets.pro;
+      const calPercent = Math.min((dailyLog.cal / activeCalTarget) * 100, 100);
+      const proPercent = Math.min((dailyLog.pro / activeProTarget) * 100, 100);
+      document.getElementById('calBar').style.width = calPercent + "%"; document.getElementById('proBar').style.width = proPercent + "%";
       document.getElementById('calText').innerText = `${dailyLog.cal} / ${activeCalTarget} kcal`;
       document.getElementById('proText').innerText = `${dailyLog.pro} / ${activeProTarget} g`;
     }
@@ -363,25 +397,11 @@
     function calculateTDEE() {
       const weight = document.getElementById('calcWeight').value; const height = document.getElementById('calcHeight').value;
       if (weight && height) {
-        targets = { cal: Math.round(((10 * weight) + (6.25 * height) - 75) * 1.55), pro: Math.round(weight * 1.8) }; 
-        localStorage.setItem('targets', JSON.stringify(targets)); updateProgress(); toggleCalc();
-        alert(`Target Dasar diperbarui!`);
+        const bmr = (10 * weight) + (6.25 * height) - (5 * 16) + 5; const tdee = Math.round(bmr * 1.55); const proTarget = Math.round(weight * 1.8); 
+        targets = { cal: tdee, pro: proTarget }; localStorage.setItem('targets', JSON.stringify(targets)); 
+        updateProgress(); toggleCalc();
+        alert(`Target Dasar diperbarui!\nKalori: ${tdee}\nProtein: ${proTarget}g`);
       }
-    }
-
-    function startCamera() {
-      if(typeof Html5QrcodeScanner === 'undefined') return alert('Library Kamera belum dimuat, pastikan koneksi internet lancar.');
-      const readerDiv = document.getElementById('reader'); const startBtn = document.getElementById('startCamBtn');
-      if (html5QrcodeScanner) {
-        html5QrcodeScanner.clear(); html5QrcodeScanner = null;
-        readerDiv.classList.add('hidden'); startBtn.innerHTML = `Buka Kamera`; startBtn.classList.replace('bg-red-500', 'bg-primary'); return;
-      }
-      readerDiv.classList.remove('hidden'); startBtn.innerHTML = `Tutup Kamera`; startBtn.classList.replace('bg-primary', 'bg-red-500');
-      html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 150} }, false);
-      html5QrcodeScanner.render((text) => {
-        document.getElementById('barcodeInput').value = text; html5QrcodeScanner.clear(); html5QrcodeScanner = null;
-        readerDiv.classList.add('hidden'); startBtn.innerHTML = `Buka Kamera`; startBtn.classList.replace('bg-red-500', 'bg-primary'); searchProduct();
-      }, () => {});
     }
 
     function addToCompare() {
@@ -404,12 +424,12 @@
 
     function exportWA() {
       let cT = isGymDay ? targets.cal + 300 : targets.cal; let pT = isGymDay ? targets.pro + 20 : targets.pro;
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`*Catatan Nutrisi (NutriScan)*\n🔥 Streak: ${localStorage.getItem('streak')} Hari\n\n📊 Kalori: ${dailyLog.cal} /${cT} kcal\n💪 Protein: ${dailyLog.pro} /${pT}g`)}`, '_blank');
+      let text = `*Catatan Nutrisi (NutriScan)*\n🔥 Streak: ${localStorage.getItem('streak')} Hari\n\n📊 Kalori: ${dailyLog.cal} / ${cT}\n💪 Protein: ${dailyLog.pro} / ${pT}g`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
     }
 
     function renderChart() {
-      if(typeof Chart === 'undefined') return;
-      let history = getSafeJSON('history', []);
+      let history = JSON.parse(localStorage.getItem('history')) || [];
       if (history.length === 0) history = [{ date: "H-3", cal: 1800, pro: 70 }, { date: "H-2", cal: 2100, pro: 85 }, { date: "H-1", cal: 1950, pro: 80 }];
       const ctx = document.getElementById('weeklyChart').getContext('2d');
       chartInstance = new Chart(ctx, {
@@ -420,8 +440,7 @@
       });
     }
 
-    // Jalankan pengecekan login saat web dimuat
-    window.onload = checkLogin;
+    checkLogin();
   </script>
 </body>
 </html>
