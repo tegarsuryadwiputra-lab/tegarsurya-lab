@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScan - Indomaret Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="bg-emerald-500 text-white p-2 rounded-xl shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-slate-900 leading-tight">NutriScan</h1>
+                    <p class="text-xs text-emerald-600 font-medium">Indomaret Edition</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-1.5 bg-emerald-50 text-emerald-700 text-xs px-3 py-1.5 rounded-full font-medium border border-emerald-100">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Terhubung</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-4 py-6 w-full flex-1 flex flex-col space-y-6">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-3 gap-3 text-center">
+            <div class="bg-orange-50/60 p-3 rounded-xl border border-orange-100/50">
+                <p class="text-[11px] font-semibold text-orange-600 uppercase">Kalori</p>
+                <p id="totalCal" class="text-lg font-bold text-orange-700 mt-0.5">0 <span class="text-xs font-normal">kcal</span></p>
+            </div>
+            <div class="bg-blue-50/60 p-3 rounded-xl border border-blue-100/50">
+                <p class="text-[11px] font-semibold text-blue-600 uppercase">Karbo</p>
+                <p id="totalCarb" class="text-lg font-bold text-blue-700 mt-0.5">0 <span class="text-xs font-normal">g</span></p>
+            </div>
+            <div class="bg-rose-50/60 p-3 rounded-xl border border-rose-100/50">
+                <p class="text-[11px] font-semibold text-rose-600 uppercase">Lemak</p>
+                <p id="totalFat" class="text-lg font-bold text-rose-700 mt-0.5">0 <span class="text-xs font-normal">g</span></p>
+            </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 space-y-3">
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Masukkan Barcode Produk</label>
+            <div class="flex space-x-2">
+                <input type="text" id="barcodeInput" placeholder="Contoh: 8996001600146" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono">
+                <button id="searchBtn" class="bg-slate-900 text-white px-5 rounded-xl font-semibold text-sm">Cari</button>
+                <button id="scanCameraBtn" class="bg-emerald-500 text-white p-3 rounded-xl flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                </button>
+            </div>
+        </div>
+
+        <section id="resultContainer" class="hidden bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+            <div class="flex items-center space-x-4 border-b border-slate-100 pb-4">
+                <div class="w-16 h-16 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center p-1 overflow-hidden shrink-0">
+                    <img id="resultImage" src="" alt="Produk" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h3 id="resultName" class="font-bold text-slate-900 leading-snug">Nama Produk</h3>
+                    <p id="resultBarcode" class="text-xs font-mono text-slate-400 mt-0.5">Barcode</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2 text-center">
+                <div class="bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
+                    <p class="text-[10px] font-semibold text-emerald-600 uppercase">Protein</p>
+                    <p id="resProtein" class="text-sm font-bold text-emerald-700 mt-0.5">0g</p>
+                </div>
+                <div class="bg-orange-50/50 p-2.5 rounded-xl border border-orange-100/50">
+                    <p class="text-[10px] font-semibold text-orange-600 uppercase">Kalori</p>
+                    <p id="resCal" class="text-sm font-bold text-orange-700 mt-0.5">0</p>
+                </div>
+                <div class="bg-blue-50/50 p-2.5 rounded-xl border border-blue-100/50">
+                    <p class="text-[10px] font-semibold text-blue-600 uppercase">Karbo</p>
+                    <p id="resCarb" class="text-sm font-bold text-blue-700 mt-0.5">0g</p>
+                </div>
+                <div class="bg-rose-50/50 p-2.5 rounded-xl border border-rose-100/50">
+                    <p class="text-[10px] font-semibold text-rose-600 uppercase">Lemak</p>
+                    <p id="resFat" class="text-sm font-bold text-rose-700 mt-0.5">0g</p>
+                </div>
+            </div>
+
+            <button id="addLogBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl text-sm">
+                Catat ke Konsumsi Harian
+            </button>
+        </section>
+
+        <div id="statusMessage" class="hidden text-center py-4 text-sm text-slate-400">Memuat data produk...</div>
+    </main>
+
+    <div id="scannerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex flex-col items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl flex flex-col">
+            <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
+                <h3 class="font-bold text-sm">Arahkan Kamera ke Barcode</h3>
+                <button id="closeScannerBtn" class="text-slate-400 font-bold text-lg px-2">&times;</button>
+            </div>
+            <div id="reader" class="w-full bg-black aspect-square"></div>
+            <div class="p-4 bg-white text-center text-xs text-slate-500">Posisikan barcode di dalam kotak pemindai.</div>
+        </div>
+    </div>
+
+    <script>
+        const mockProducts = {
+            "8996001330036": { name: "Chitato Sapi Panggang (68g)", image: "https://images.openfoodfacts.org/images/products/899/600/133/0036/front_id.3.400.jpg", kalori: 360, protein: 4, karbo: 40, lemak: 20 },
+            "8998000000201": { name: "Tango Wafer Cokelat (130g)", image: "https://images.openfoodfacts.org/images/products/899/800/000/0201/front_id.3.400.jpg", kalori: 630, protein: 7, karbo: 88, lemak: 27 },
+            "8996001600146": { name: "Teh Pucuk Harum (350ml)", image: "https://images.openfoodfacts.org/images/products/899/600/160/0146/front_id.3.400.jpg", kalori: 120, protein: 0, karbo: 30, lemak: 0 },
+            "089686010947": { name: "Indomie Goreng Special (85g)", image: "https://images.openfoodfacts.org/images/products/089/686/010/947/front_id.3.400.jpg", kalori: 380, protein: 8, karbo: 54, lemak: 14 }
+        };
+
+        let dailyIntake = { cal: 0, carb: 0, fat: 0 };
+        let currentProduct = null;
+        let html5QrCode = null;
+
+        function displayProduct(product) {
+            currentProduct = product;
+            document.getElementById('resultName').innerText = product.name;
+            document.getElementById('resultBarcode').innerText = product.barcode || "Verified";
+            document.getElementById('resultImage').src = product.image || "";
+            document.getElementById('resProtein').innerText = (product.protein || 0) + "g";
+            document.getElementById('resCal').innerText = product.kalori || 0;
+            document.getElementById('resCarb').innerText = (product.karbo || 0) + "g";
+            document.getElementById('resFat').innerText = (product.lemak || 0) + "g";
+            document.getElementById('resultContainer').classList.remove('hidden');
+            document.getElementById('statusMessage').classList.add('hidden');
+        }
+
+        async function lookupProduct(code) {
+            code = code.trim();
+            if (!code) return;
+            document.getElementById('resultContainer').classList.add('hidden');
+            document.getElementById('statusMessage').classList.remove('hidden');
+
+            if (mockProducts[code]) {
+                displayProduct({ ...mockProducts[code], barcode: code });
+                return;
+            }
+
+            try {
+                let res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`);
+                let data = await res.json();
+                if (data.status === 1 && data.product) {
+                    let p = data.product;
+                    displayProduct({
+                        name: p.product_name_id || p.product_name || `Produk ${code}`,
+                        image: p.image_front_url || "",
+                        kalori: Math.round(p.nutriments?.['energy-kcal_100g'] || 0),
+                        protein: Math.round(p.nutriments?.['protein_100g'] || 0),
+                        karbo: Math.round(p.nutriments?.['carbohydrates_100g'] || 0),
+                        lemak: Math.round(p.nutriments?.['fat_100g'] || 0),
+                        barcode: code
+                    });
+                    return;
+                }
+            } catch (e) {}
+
+            document.getElementById('statusMessage').classList.add('hidden');
+            alert("Produk tidak ditemukan.");
+        }
+
+        document.getElementById('searchBtn').addEventListener('click', () => lookupProduct(document.getElementById('barcodeInput').value));
+        document.getElementById('barcodeInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') lookupProduct(e.target.value); });
+        
+        document.getElementById('addLogBtn').addEventListener('click', () => {
+            if (!currentProduct) return;
+            dailyIntake.cal += currentProduct.kalori;
+            dailyIntake.carb += currentProperty ? currentProperty.karbo : currentProduct.karbo;
+            dailyIntake.fat += currentProduct.lemak;
+            document.getElementById('totalCal').innerHTML = `${dailyIntake.cal} <span class="text-xs">kcal</span>`;
+            document.getElementById('totalCarb').innerHTML = `${dailyIntake.carb} <span class="text-xs">g</span>`;
+            document.getElementById('totalFat').innerHTML = `${dailyIntake.fat} <span class="text-xs">g</span>`;
+            document.getElementById('resultContainer').classList.add('hidden');
+            document.getElementById('barcodeInput').value = "";
+            alert("Berhasil dicatat!");
+        });
+
+        document.getElementById('scanCameraBtn').addEventListener('click', () => {
+            document.getElementById('scannerModal').classList.remove('hidden');
+            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (text) => {
+                html5QrCode.stop().then(() => document.getElementById('scannerModal').classList.add('hidden'));
+                document.getElementById('barcodeInput').value = text;
+                lookupProduct(text);
+            }, () => {});
+        });
+
+        document.getElementById('closeScannerBtn').addEventListener('click', () => {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => document.getElementById('scannerModal').classList.add('hidden'));
+            } else {
+                document.getElementById('scannerModal').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
