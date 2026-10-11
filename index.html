@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NutriScan - Indomaret Edition</title>
   <link rel="manifest" href="manifest.json">
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     tailwind.config = {
@@ -17,159 +15,223 @@
   </script>
   <style>
     body { transition: background-color 0.3s, color 0.3s; }
+    /* Sembunyikan scrollbar agar lebih mirip aplikasi */
+    ::-webkit-scrollbar { display: none; }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 pb-20">
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 pb-24">
 
   <!-- Header -->
   <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
     <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-2">
         <div class="bg-primary text-white p-2 rounded-lg">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
         </div>
         <h1 class="font-bold text-xl text-primary">NutriScan</h1>
       </div>
       <div class="flex items-center gap-3">
-        <!-- Streak Challenge -->
         <div class="flex items-center text-orange-500 font-bold bg-orange-100 dark:bg-gray-700 px-2 py-1 rounded-full text-sm">
           🔥 <span id="streakCount">0</span> Hari
         </div>
-        <!-- Dark Mode Toggle -->
-        <button id="themeToggle" class="p-2 bg-gray-100 dark:bg-gray-700 rounded-full">
-          🌙
-        </button>
+        <button id="themeToggle" class="p-2 bg-gray-100 dark:bg-gray-700 rounded-full">🌙</button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-md mx-auto px-4 mt-4 space-y-6">
+  <!-- Container Utama -->
+  <main class="max-w-md mx-auto px-4 mt-4 relative">
 
-    <!-- Target Harian & Progress -->
-    <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
-      <div class="flex justify-between items-center mb-2">
-        <h2 class="font-bold">Target Hari Ini</h2>
-        <button onclick="toggleCalc()" class="text-xs text-primary bg-green-50 dark:bg-gray-700 px-2 py-1 rounded">Hitung Kebutuhan</button>
-      </div>
-      
-      <!-- Calculator Modal (Hidden) -->
-      <div id="calcBox" class="hidden mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm">
-        <p class="font-bold mb-2">Kalkulator Kalori & Protein</p>
-        <div class="grid grid-cols-2 gap-2 mb-2">
-          <input type="number" id="calcWeight" placeholder="Berat (kg)" class="p-2 rounded border dark:bg-gray-800 dark:border-gray-600 w-full">
-          <input type="number" id="calcHeight" placeholder="Tinggi (cm)" class="p-2 rounded border dark:bg-gray-800 dark:border-gray-600 w-full">
-        </div>
-        <button onclick="calculateTDEE()" class="w-full bg-primary text-white rounded p-2 font-bold">Simpan Target</button>
-      </div>
-
-      <div>
-        <div class="flex justify-between text-sm mb-1">
-          <span>Kalori</span>
-          <span id="calText" class="font-bold text-primary">0 / 2000 kcal</span>
-        </div>
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-3">
-          <div id="calBar" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
-        </div>
-        <div class="flex justify-between text-sm mb-1">
-          <span>Protein</span>
-          <span id="proText" class="font-bold text-blue-500">0 / 80 g</span>
-        </div>
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-          <div id="proBar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+    <!-- HALAMAN 1: SCANNER -->
+    <section id="page-scan" class="page-section">
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
+        <h2 class="font-bold mb-3 text-lg">Cari Produk</h2>
+        <div class="flex gap-2">
+          <input type="text" id="barcodeInput" placeholder="Ketik Barcode atau Nama..." class="flex-1 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary w-full">
+          <button onclick="searchProduct()" class="bg-primary text-white px-5 py-3 rounded-xl font-bold">Cari</button>
         </div>
       </div>
-    </div>
 
-    <!-- Scanner / Input Barcode -->
-    <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
-      <h2 class="font-bold mb-3">Scan atau Cari Produk</h2>
-      <div class="flex gap-2">
-        <input type="text" id="barcodeInput" placeholder="Masukkan Barcode / Nama" class="flex-1 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
-        <button onclick="searchProduct()" class="bg-primary text-white px-4 py-2 rounded-xl font-bold">Cari</button>
+      <div id="resultCard" class="hidden bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-primary">
+        <div class="flex justify-between items-start mb-3">
+          <h3 id="resName" class="font-bold text-lg leading-tight">Nama Produk</h3>
+          <span id="badgeProtein" class="hidden bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded border border-yellow-300 whitespace-nowrap">💪 Tinggi Protein</span>
+        </div>
+        <div class="grid grid-cols-4 gap-2 text-center mb-4">
+          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Kalori</p><p id="resCal" class="font-bold text-red-500">-</p></div>
+          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Protein</p><p id="resPro" class="font-bold text-primary">-</p></div>
+          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Karbo</p><p id="resCarb" class="font-bold text-blue-500">-</p></div>
+          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Lemak</p><p id="resFat" class="font-bold text-orange-500">-</p></div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="addToDaily()" class="flex-1 bg-primary text-white py-3 rounded-xl font-bold text-sm shadow-md">Catat Konsumsi</button>
+          <button onclick="addToCompare()" class="bg-gray-200 dark:bg-gray-700 dark:text-white px-3 py-3 rounded-xl font-bold text-sm">Bandingkan</button>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Product Result Card -->
-    <div id="resultCard" class="hidden bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-primary">
-      <div class="flex justify-between items-start mb-3">
-        <h3 id="resName" class="font-bold text-lg leading-tight">Nama Produk</h3>
-        <span id="badgeProtein" class="hidden bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded border border-yellow-300">💪 Tinggi Protein</span>
-      </div>
-      <div class="grid grid-cols-4 gap-2 text-center mb-4">
-        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-xs text-gray-500 dark:text-gray-400">Kalori</p><p id="resCal" class="font-bold text-red-500">-</p></div>
-        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-xs text-gray-500 dark:text-gray-400">Protein</p><p id="resPro" class="font-bold text-primary">-</p></div>
-        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-xs text-gray-500 dark:text-gray-400">Karbo</p><p id="resCarb" class="font-bold text-blue-500">-</p></div>
-        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-xs text-gray-500 dark:text-gray-400">Lemak</p><p id="resFat" class="font-bold text-orange-500">-</p></div>
-      </div>
-      <div class="flex gap-2">
-        <button onclick="addToDaily()" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold text-sm">Catat Konsumsi</button>
-        <button onclick="addToCompare()" class="bg-gray-200 dark:bg-gray-700 dark:text-white px-3 py-2 rounded-xl font-bold text-sm">Bandingkan</button>
-      </div>
-    </div>
+    <!-- HALAMAN 2: TARGET & KALKULATOR -->
+    <section id="page-target" class="page-section hidden">
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-bold text-lg">Target Hari Ini</h2>
+          <button onclick="toggleCalc()" class="text-xs text-primary bg-green-50 dark:bg-gray-700 px-3 py-1.5 rounded-lg font-bold">Kalkulator</button>
+        </div>
+        
+        <div id="calcBox" class="hidden mb-5 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm border dark:border-gray-600">
+          <p class="font-bold mb-3 text-center">Hitung Kebutuhan Optimal</p>
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <input type="number" id="calcWeight" placeholder="Berat (kg)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
+            <input type="number" id="calcHeight" placeholder="Tinggi (cm)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
+          </div>
+          <button onclick="calculateTDEE()" class="w-full bg-primary text-white rounded-lg p-3 font-bold shadow">Simpan Target</button>
+        </div>
 
-    <!-- Comparison Section -->
-    <div id="compareSection" class="hidden bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
-      <div class="flex justify-between items-center mb-3">
-        <h2 class="font-bold">Perbandingan Produk</h2>
-        <button onclick="clearCompare()" class="text-xs text-red-500">Hapus</button>
+        <div>
+          <div class="flex justify-between text-sm mb-1">
+            <span class="font-medium">Kalori</span>
+            <span id="calText" class="font-bold text-primary">0 / 2000 kcal</span>
+          </div>
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-4 overflow-hidden">
+            <div id="calBar" class="bg-primary h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between text-sm mb-1">
+            <span class="font-medium">Protein</span>
+            <span id="proText" class="font-bold text-blue-500">0 / 80 g</span>
+          </div>
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+            <div id="proBar" class="bg-blue-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
       </div>
-      <div id="compareGrid" class="grid grid-cols-2 gap-2 text-sm">
-        <!-- Injected via JS -->
-      </div>
-    </div>
+    </section>
 
-    <!-- Grafik & Ekspor -->
-    <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="font-bold">Grafik 7 Hari Terakhir</h2>
-        <button onclick="exportWA()" class="bg-green-500 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 font-bold">
-          Ekspor ke WA
-        </button>
+    <!-- HALAMAN 3: BANDINGKAN -->
+    <section id="page-compare" class="page-section hidden">
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-bold text-lg">Adu Produk</h2>
+          <button onclick="clearCompare()" class="text-xs bg-red-100 text-red-600 px-3 py-1.5 rounded-lg font-bold">Bersihkan</button>
+        </div>
+        <p id="compareEmpty" class="text-sm text-center text-gray-500 py-6">Belum ada produk. Cari produk di halaman Scan lalu klik "Bandingkan".</p>
+        <div id="compareGrid" class="grid grid-cols-2 gap-3 text-sm hidden">
+          <!-- Injected via JS -->
+        </div>
       </div>
-      <canvas id="weeklyChart" width="400" height="200"></canvas>
-    </div>
+    </section>
+
+    <!-- HALAMAN 4: GRAFIK -->
+    <section id="page-stats" class="page-section hidden">
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-bold text-lg">Statistik 7 Hari</h2>
+          <button onclick="exportWA()" class="bg-green-500 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 font-bold shadow">
+            Ekspor ke WA
+          </button>
+        </div>
+        <div class="relative w-full h-56">
+          <canvas id="weeklyChart"></canvas>
+        </div>
+      </div>
+    </section>
 
   </main>
 
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border-t dark:border-gray-700 flex justify-around p-3 pb-4 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+    <button onclick="switchTab('page-scan', this)" class="nav-btn flex flex-col items-center text-primary w-1/4">
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+      <span class="text-[10px] font-bold">Scan</span>
+    </button>
+    <button onclick="switchTab('page-target', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+      <span class="text-[10px] font-bold">Target</span>
+    </button>
+    <button onclick="switchTab('page-compare', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+      <span class="text-[10px] font-bold">Bandingkan</span>
+    </button>
+    <button onclick="switchTab('page-stats', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
+      <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+      <span class="text-[10px] font-bold">Grafik</span>
+    </button>
+  </nav>
+
   <script>
-    // 1. Database Produk (Ditambah produk tinggi protein & gampang dicari)
+    // 1. DATABASE PRODUK (Diperbanyak!)
     const database = {
-      // Snack & Roti
-      "8997001430018": { name: "Sari Roti Tawar Spesial (350g)", cal: 900, pro: 24, carb: 160, fat: 14 },
+      // Snack & Coklat
       "8992753033102": { name: "SilverQueen Chunky Bar", cal: 170, pro: 3, carb: 18, fat: 10 },
-      "8998000000201": { name: "Fitbar Multigrain", cal: 90, pro: 2, carb: 15, fat: 3 },
+      "8996001340011": { name: "Beng-beng Regular", cal: 110, pro: 1, carb: 16, fat: 5 },
+      "8998000000201": { name: "Tango Wafer Coklat", cal: 140, pro: 2, carb: 20, fat: 6 },
+      "8992753075102": { name: "Pocky Choco", cal: 100, pro: 2, carb: 14, fat: 4 },
       "8999000000002": { name: "Soyjoy Crispy", cal: 130, pro: 4, carb: 15, fat: 6 },
-      // Susu & Protein
-      "8992753011018": { name: "Ultra Milk Low Fat (250ml)", cal: 110, pro: 8, carb: 15, fat: 2 },
-      "8996001600207": { name: "L-Men 2Go (200ml)", cal: 140, pro: 12, carb: 18, fat: 3 },
-      "8991000000003": { name: "Cimory Yogurt Squeeze", cal: 120, pro: 4, carb: 20, fat: 3 },
-      "8999999033411": { name: "Bear Brand (189ml)", cal: 120, pro: 6, carb: 9, fat: 7 },
-      // Makanan Gym Minimarket
-      "2000000000001": { name: "Telur Rebus Indomaret (2 btr)", cal: 155, pro: 12, carb: 1, fat: 10 },
-      "2000000000002": { name: "Edamame Rebus Indomaret", cal: 120, pro: 11, carb: 10, fat: 5 },
-      "2000000000003": { name: "Dada Ayam Goreng (Bento)", cal: 250, pro: 25, carb: 5, fat: 12 },
-      // Minuman Ringan
+      "8998000000202": { name: "Fitbar Multigrain", cal: 90, pro: 2, carb: 15, fat: 3 },
+      
+      // Roti & Mie
+      "8997001430018": { name: "Sari Roti Tawar Spesial", cal: 900, pro: 24, carb: 160, fat: 14 },
+      "089686010947": { name: "Indomie Goreng", cal: 380, pro: 8, carb: 54, fat: 14 },
+      "8992753112234": { name: "Pop Mie Ayam", cal: 320, pro: 6, carb: 42, fat: 12 },
+      "8886013700104": { name: "Mie Gemez Enaak", cal: 130, pro: 2, carb: 18, fat: 6 },
+      "8998866200578": { name: "Mie Sedaap Goreng", cal: 400, pro: 9, carb: 55, fat: 16 },
+
+      // Minuman Ringan & Kopi
+      "8996001600146": { name: "Teh Pucuk Harum", cal: 80, pro: 0, carb: 20, fat: 0 },
       "8997033810017": { name: "Le Minerale (600ml)", cal: 0, pro: 0, carb: 0, fat: 0 },
-      "8991388102123": { name: "Aqua Air Mineral (600ml)", cal: 0, pro: 0, carb: 0, fat: 0 }
+      "8991388102123": { name: "Aqua Air Mineral", cal: 0, pro: 0, carb: 0, fat: 0 },
+      "8999999033411": { name: "Bear Brand", cal: 120, pro: 6, carb: 9, fat: 7 },
+      "8991002101036": { name: "Teh Botol Sosro", cal: 100, pro: 0, carb: 25, fat: 0 },
+
+      // Susu & Makanan Olahraga / Tinggi Protein
+      "8992753011018": { name: "Ultra Milk Low Fat", cal: 110, pro: 8, carb: 15, fat: 2 },
+      "8996001600207": { name: "L-Men 2Go", cal: 140, pro: 12, carb: 18, fat: 3 },
+      "8991000000003": { name: "Cimory Yogurt Squeeze", cal: 120, pro: 4, carb: 20, fat: 3 },
+      "2000000000001": { name: "Telur Rebus Indomaret (2)", cal: 155, pro: 12, carb: 1, fat: 10 },
+      "2000000000002": { name: "Edamame Rebus", cal: 120, pro: 11, carb: 10, fat: 5 },
+      "2000000000003": { name: "Dada Ayam Goreng (Bento)", cal: 250, pro: 25, carb: 5, fat: 12 }
     };
 
     // State Variables
     let today = new Date().toISOString().split('T')[0];
     let dailyLog = JSON.parse(localStorage.getItem('dailyLog')) || { cal: 0, pro: 0, carb: 0, fat: 0, date: today };
-    let targets = JSON.parse(localStorage.getItem('targets')) || { cal: 2000, pro: 85 }; // Default target protein 85g
+    let targets = JSON.parse(localStorage.getItem('targets')) || { cal: 2000, pro: 85 }; 
     let currentScanned = null;
     let compareList = [];
+    let chartInstance = null;
 
-    // 2. Inisialisasi Aplikasi
     function initApp() {
       checkStreak();
       checkNewDay();
       updateProgress();
       setupTheme();
-      renderChart();
+      renderChart(); // Prepare chart di background
     }
 
-    // 3. Mode Gelap Terang
+    // 2. SISTEM NAVIGASI (SPA)
+    function switchTab(tabId, btnElement) {
+      // Sembunyikan semua halaman
+      document.querySelectorAll('.page-section').forEach(page => {
+        page.classList.add('hidden');
+      });
+      // Tampilkan halaman yang dipilih
+      document.getElementById(tabId).classList.remove('hidden');
+
+      // Reset warna semua tombol nav
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-primary');
+        btn.classList.add('text-gray-400');
+      });
+      // Beri warna primary pada tombol yang diklik
+      btnElement.classList.remove('text-gray-400');
+      btnElement.classList.add('text-primary');
+
+      // Update ukuran grafik jika tab statistik dibuka
+      if(tabId === 'page-stats' && chartInstance) {
+        chartInstance.resize();
+      }
+    }
+
+    // 3. LOGIKA UTAMA (Sama seperti sebelumnya)
     function setupTheme() {
       const toggle = document.getElementById('themeToggle');
       if (localStorage.getItem('theme') === 'dark') {
@@ -188,20 +250,14 @@
       });
     }
 
-    // 4. Mode Tantangan (Streak)
     function checkStreak() {
       let streak = parseInt(localStorage.getItem('streak') || 0);
       let lastLogin = localStorage.getItem('lastLogin');
-      
-      let yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
+      let yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
       let yesterdayStr = yesterday.toISOString().split('T')[0];
 
-      if (lastLogin === yesterdayStr) {
-        streak++;
-      } else if (lastLogin !== today) {
-        streak = 1; // Reset jika bolong
-      }
+      if (lastLogin === yesterdayStr) streak++;
+      else if (lastLogin !== today) streak = 1;
       
       localStorage.setItem('streak', streak);
       localStorage.setItem('lastLogin', today);
@@ -210,29 +266,22 @@
 
     function checkNewDay() {
       if (dailyLog.date !== today) {
-        // Simpan data kemarin ke history chart
         let history = JSON.parse(localStorage.getItem('history')) || [];
         history.push({ date: dailyLog.date, cal: dailyLog.cal, pro: dailyLog.pro });
         if (history.length > 7) history.shift();
         localStorage.setItem('history', JSON.stringify(history));
-        
-        // Reset harian
         dailyLog = { cal: 0, pro: 0, carb: 0, fat: 0, date: today };
         localStorage.setItem('dailyLog', JSON.stringify(dailyLog));
       }
     }
 
-    // 5. Pencarian & Badge Protein
     function searchProduct() {
       const input = document.getElementById('barcodeInput').value.toLowerCase();
       let found = database[input];
-
-      // Fitur cari berdasarkan nama juga!
       if (!found) {
         for (let key in database) {
           if (database[key].name.toLowerCase().includes(input)) {
-            found = database[key];
-            break;
+            found = database[key]; break;
           }
         }
       }
@@ -245,158 +294,101 @@
         document.getElementById('resCarb').innerText = found.carb + "g";
         document.getElementById('resFat').innerText = found.fat + "g";
         
-        // Menampilkan Lencana "Tinggi Protein" jika protein >= 10g
         const badge = document.getElementById('badgeProtein');
-        if (found.pro >= 10) {
-          badge.classList.remove('hidden');
-        } else {
-          badge.classList.add('hidden');
-        }
-
+        found.pro >= 10 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
         document.getElementById('resultCard').classList.remove('hidden');
       } else {
-        alert("Produk tidak ditemukan! Coba masukkan kata kunci yang lebih spesifik.");
+        alert("Produk tidak ditemukan!");
       }
     }
 
     function addToDaily() {
       if (!currentScanned) return;
-      dailyLog.cal += currentScanned.cal;
-      dailyLog.pro += currentScanned.pro;
-      dailyLog.carb += currentScanned.carb;
-      dailyLog.fat += currentScanned.fat;
+      dailyLog.cal += currentScanned.cal; dailyLog.pro += currentScanned.pro;
+      dailyLog.carb += currentScanned.carb; dailyLog.fat += currentScanned.fat;
       localStorage.setItem('dailyLog', JSON.stringify(dailyLog));
       updateProgress();
       document.getElementById('resultCard').classList.add('hidden');
       document.getElementById('barcodeInput').value = '';
-      alert(`${currentScanned.name} berhasil dicatat!`);
+      alert(`${currentScanned.name} dicatat! Cek halaman Target.`);
     }
 
-    // 6. Progress Target Harian
     function updateProgress() {
       const calPercent = Math.min((dailyLog.cal / targets.cal) * 100, 100);
       const proPercent = Math.min((dailyLog.pro / targets.pro) * 100, 100);
-      
       document.getElementById('calBar').style.width = calPercent + "%";
       document.getElementById('proBar').style.width = proPercent + "%";
-      
       document.getElementById('calText').innerText = `${dailyLog.cal} / ${targets.cal} kcal`;
       document.getElementById('proText').innerText = `${dailyLog.pro} / ${targets.pro} g`;
     }
 
-    // Kalkulator TDEE Sederhana
-    function toggleCalc() {
-      document.getElementById('calcBox').classList.toggle('hidden');
-    }
-
+    function toggleCalc() { document.getElementById('calcBox').classList.toggle('hidden'); }
     function calculateTDEE() {
       const weight = document.getElementById('calcWeight').value;
       const height = document.getElementById('calcHeight').value;
       if (weight && height) {
-        // Rumus sederhana TDEE
-        const bmr = (10 * weight) + (6.25 * height) - (5 * 16) + 5; // Asumsi laki-laki umur 16th
-        const tdee = Math.round(bmr * 1.55); // Aktivitas moderat (gym)
-        const proTarget = Math.round(weight * 1.8); // 1.8g protein per kg berat badan
-        
+        const bmr = (10 * weight) + (6.25 * height) - (5 * 16) + 5; 
+        const tdee = Math.round(bmr * 1.55); 
+        const proTarget = Math.round(weight * 1.8); 
         targets = { cal: tdee, pro: proTarget };
         localStorage.setItem('targets', JSON.stringify(targets));
-        updateProgress();
-        toggleCalc();
+        updateProgress(); toggleCalc();
         alert(`Target harian diperbarui!\nKalori: ${tdee} kcal\nProtein: ${proTarget} g`);
       }
     }
 
-    // 7. Bandingkan Produk
     function addToCompare() {
       if (!currentScanned) return;
-      if (compareList.length >= 2) {
-        alert("Maksimal bandingkan 2 produk!");
-        return;
-      }
+      if (compareList.length >= 2) return alert("Maksimal 2 produk!");
       compareList.push(currentScanned);
       renderCompare();
       document.getElementById('resultCard').classList.add('hidden');
+      alert('Ditambahkan! Buka menu "Bandingkan" di bawah.');
     }
 
     function renderCompare() {
       const grid = document.getElementById('compareGrid');
-      const section = document.getElementById('compareSection');
+      const emptyMsg = document.getElementById('compareEmpty');
       if (compareList.length === 0) {
-        section.classList.add('hidden');
-        return;
+        grid.classList.add('hidden'); emptyMsg.classList.remove('hidden'); return;
       }
-      
-      section.classList.remove('hidden');
+      grid.classList.remove('hidden'); emptyMsg.classList.add('hidden');
       grid.innerHTML = '';
-      
       compareList.forEach(item => {
         grid.innerHTML += `
-          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg border dark:border-gray-600">
-            <p class="font-bold text-xs truncate">${item.name}</p>
-            <p class="text-xs mt-1">Kal: ${item.cal} | Pro: <span class="text-primary font-bold">${item.pro}g</span></p>
+          <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-xl border border-primary text-center">
+            <p class="font-bold text-sm mb-2 h-10 overflow-hidden">${item.name}</p>
+            <p class="text-xs text-gray-500">Kalori: <span class="font-bold text-red-500">${item.cal}</span></p>
+            <p class="text-xs text-gray-500">Protein: <span class="font-bold text-primary">${item.pro}g</span></p>
+            <p class="text-xs text-gray-500">Lemak: <span class="font-bold text-orange-500">${item.fat}g</span></p>
           </div>
         `;
       });
     }
+    function clearCompare() { compareList = []; renderCompare(); }
 
-    function clearCompare() {
-      compareList = [];
-      renderCompare();
-    }
-
-    // 8. Ekspor ke WhatsApp
     function exportWA() {
-      const text = `*Catatan Nutrisi Hari Ini (NutriScan)*\n🔥 Streak: ${localStorage.getItem('streak')} Hari\n\n📊 Total Kalori: ${dailyLog.cal} / ${targets.cal} kcal\n💪 Total Protein: ${dailyLog.pro} / ${targets.pro} g\n\nSemangat penuhi target!`;
-      const waLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-      window.open(waLink, '_blank');
+      const text = `*Catatan Nutrisi (NutriScan)*\n🔥 Streak: ${localStorage.getItem('streak')} Hari\n📊 Kalori: ${dailyLog.cal}/${targets.cal} kcal\n💪 Protein: ${dailyLog.pro}/${targets.pro} g`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
     }
 
-    // 9. Grafik Mingguan Chart.js
     function renderChart() {
       let history = JSON.parse(localStorage.getItem('history')) || [];
-      // Buat data tiruan jika history kosong agar chart terlihat bagus
-      if (history.length === 0) {
-        history = [
-          { date: "H-4", cal: 1800, pro: 70 },
-          { date: "H-3", cal: 2100, pro: 85 },
-          { date: "H-2", cal: 1950, pro: 80 },
-          { date: "H-1", cal: 2050, pro: 90 }
-        ];
-      }
-      
-      const labels = history.map(h => h.date);
-      const calData = history.map(h => h.cal);
-      const proData = history.map(h => h.pro);
-
+      if (history.length === 0) history = [{ date: "H-3", cal: 1800, pro: 70 }, { date: "H-2", cal: 2100, pro: 85 }, { date: "H-1", cal: 1950, pro: 80 }];
       const ctx = document.getElementById('weeklyChart').getContext('2d');
-      new Chart(ctx, {
+      chartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: labels,
+          labels: history.map(h => h.date),
           datasets: [
-            {
-              label: 'Protein (g)',
-              data: proData,
-              backgroundColor: '#3b82f6',
-              type: 'line',
-              tension: 0.3
-            },
-            {
-              label: 'Kalori (kcal)',
-              data: calData,
-              backgroundColor: '#10b981',
-              borderRadius: 4
-            }
+            { label: 'Protein (g)', data: history.map(h => h.pro), backgroundColor: '#3b82f6', type: 'line', tension: 0.3 },
+            { label: 'Kalori (kcal)', data: history.map(h => h.cal), backgroundColor: '#10b981', borderRadius: 4 }
           ]
         },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true } }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
       });
     }
 
-    // Jalankan saat web dimuat
     initApp();
   </script>
 </body>
