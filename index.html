@@ -1,239 +1,403 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriScan - Indomaret Edition</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutriScan - Indomaret Edition</title>
+  <link rel="manifest" href="manifest.json">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: { primary: '#10b981' } } }
+    }
+  </script>
+  <style>
+    body { transition: background-color 0.3s, color 0.3s; }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 pb-20">
 
-    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="bg-emerald-500 text-white p-2 rounded-xl shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg text-slate-900 leading-tight">NutriScan</h1>
-                    <p class="text-xs text-emerald-600 font-medium">Indomaret Edition</p>
-                </div>
-            </div>
-            <div class="flex items-center space-x-1.5 bg-emerald-50 text-emerald-700 text-xs px-3 py-1.5 rounded-full font-medium border border-emerald-100">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Terhubung</span>
-            </div>
+  <!-- Header -->
+  <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+    <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <div class="bg-primary text-white p-2 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
         </div>
-    </header>
-
-    <main class="max-w-md mx-auto px-4 py-6 w-full flex-1 flex flex-col space-y-6">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-3 gap-3 text-center">
-            <div class="bg-orange-50/60 p-3 rounded-xl border border-orange-100/50">
-                <p class="text-[11px] font-semibold text-orange-600 uppercase">Kalori</p>
-                <p id="totalCal" class="text-lg font-bold text-orange-700 mt-0.5">0 <span class="text-xs font-normal">kcal</span></p>
-            </div>
-            <div class="bg-blue-50/60 p-3 rounded-xl border border-blue-100/50">
-                <p class="text-[11px] font-semibold text-blue-600 uppercase">Karbo</p>
-                <p id="totalCarb" class="text-lg font-bold text-blue-700 mt-0.5">0 <span class="text-xs font-normal">g</span></p>
-            </div>
-            <div class="bg-rose-50/60 p-3 rounded-xl border border-rose-100/50">
-                <p class="text-[11px] font-semibold text-rose-600 uppercase">Lemak</p>
-                <p id="totalFat" class="text-lg font-bold text-rose-700 mt-0.5">0 <span class="text-xs font-normal">g</span></p>
-            </div>
+        <h1 class="font-bold text-xl text-primary">NutriScan</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Streak Challenge -->
+        <div class="flex items-center text-orange-500 font-bold bg-orange-100 dark:bg-gray-700 px-2 py-1 rounded-full text-sm">
+          🔥 <span id="streakCount">0</span> Hari
         </div>
+        <!-- Dark Mode Toggle -->
+        <button id="themeToggle" class="p-2 bg-gray-100 dark:bg-gray-700 rounded-full">
+          🌙
+        </button>
+      </div>
+    </div>
+  </header>
 
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 space-y-3">
-            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Masukkan Barcode Produk</label>
-            <div class="flex space-x-2">
-                <input type="text" id="barcodeInput" placeholder="Contoh: 8996001600146" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono">
-                <button id="searchBtn" class="bg-slate-900 text-white px-5 rounded-xl font-semibold text-sm">Cari</button>
-                <button id="scanCameraBtn" class="bg-emerald-500 text-white p-3 rounded-xl flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                </button>
-            </div>
+  <main class="max-w-md mx-auto px-4 mt-4 space-y-6">
+
+    <!-- Target Harian & Progress -->
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="font-bold">Target Hari Ini</h2>
+        <button onclick="toggleCalc()" class="text-xs text-primary bg-green-50 dark:bg-gray-700 px-2 py-1 rounded">Hitung Kebutuhan</button>
+      </div>
+      
+      <!-- Calculator Modal (Hidden) -->
+      <div id="calcBox" class="hidden mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm">
+        <p class="font-bold mb-2">Kalkulator Kalori & Protein</p>
+        <div class="grid grid-cols-2 gap-2 mb-2">
+          <input type="number" id="calcWeight" placeholder="Berat (kg)" class="p-2 rounded border dark:bg-gray-800 dark:border-gray-600 w-full">
+          <input type="number" id="calcHeight" placeholder="Tinggi (cm)" class="p-2 rounded border dark:bg-gray-800 dark:border-gray-600 w-full">
         </div>
+        <button onclick="calculateTDEE()" class="w-full bg-primary text-white rounded p-2 font-bold">Simpan Target</button>
+      </div>
 
-        <section id="resultContainer" class="hidden bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-            <div class="flex items-center space-x-4 border-b border-slate-100 pb-4">
-                <div class="w-16 h-16 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center p-1 overflow-hidden shrink-0">
-                    <img id="resultImage" src="" alt="Produk" class="w-full h-full object-contain">
-                </div>
-                <div>
-                    <h3 id="resultName" class="font-bold text-slate-900 leading-snug">Nama Produk</h3>
-                    <p id="resultBarcode" class="text-xs font-mono text-slate-400 mt-0.5">Barcode</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-4 gap-2 text-center">
-                <div class="bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
-                    <p class="text-[10px] font-semibold text-emerald-600 uppercase">Protein</p>
-                    <p id="resProtein" class="text-sm font-bold text-emerald-700 mt-0.5">0g</p>
-                </div>
-                <div class="bg-orange-50/50 p-2.5 rounded-xl border border-orange-100/50">
-                    <p class="text-[10px] font-semibold text-orange-600 uppercase">Kalori</p>
-                    <p id="resCal" class="text-sm font-bold text-orange-700 mt-0.5">0</p>
-                </div>
-                <div class="bg-blue-50/50 p-2.5 rounded-xl border border-blue-100/50">
-                    <p class="text-[10px] font-semibold text-blue-600 uppercase">Karbo</p>
-                    <p id="resCarb" class="text-sm font-bold text-blue-700 mt-0.5">0g</p>
-                </div>
-                <div class="bg-rose-50/50 p-2.5 rounded-xl border border-rose-100/50">
-                    <p class="text-[10px] font-semibold text-rose-600 uppercase">Lemak</p>
-                    <p id="resFat" class="text-sm font-bold text-rose-700 mt-0.5">0g</p>
-                </div>
-            </div>
-
-            <button id="addLogBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl text-sm">
-                Catat ke Konsumsi Harian
-            </button>
-        </section>
-
-        <div id="statusMessage" class="hidden text-center py-4 text-sm text-slate-400">Memuat data produk...</div>
-    </main>
-
-    <div id="scannerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex flex-col items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl flex flex-col">
-            <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
-                <h3 class="font-bold text-sm">Arahkan Kamera ke Barcode</h3>
-                <button id="closeScannerBtn" class="text-slate-400 font-bold text-lg px-2">&times;</button>
-            </div>
-            <div id="reader" class="w-full bg-black aspect-square"></div>
-            <div class="p-4 bg-white text-center text-xs text-slate-500">Posisikan barcode di dalam kotak pemindai.</div>
+      <div>
+        <div class="flex justify-between text-sm mb-1">
+          <span>Kalori</span>
+          <span id="calText" class="font-bold text-primary">0 / 2000 kcal</span>
         </div>
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-3">
+          <div id="calBar" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
+        </div>
+        <div class="flex justify-between text-sm mb-1">
+          <span>Protein</span>
+          <span id="proText" class="font-bold text-blue-500">0 / 80 g</span>
+        </div>
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+          <div id="proBar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        const mockProducts = {
-            "8996001330036": { name: "Chitato Sapi Panggang (68g)", image: "https://images.openfoodfacts.org/images/products/899/600/133/0036/front_id.3.400.jpg", kalori: 360, protein: 4, karbo: 40, lemak: 20 },
-            "8996001330357": { name: "Chitato Lite (68g)", image: "https://images.openfoodfacts.org/images/products/899/600/133/0357/front_id.3.400.jpg", kalori: 350, protein: 3, karbo: 42, lemak: 19 },
-            "8992753111206": { name: "Taro Net Potato BBQ (36g)", image: "https://images.openfoodfacts.org/images/products/899/275/311/1206/front_id.3.400.jpg", kalori: 180, protein: 2, karbo: 22, lemak: 9 },
-            "8996001320013": { name: "Qtela Keripik Singkong Original (60g)", image: "https://images.openfoodfacts.org/images/products/899/600/132/0013/front_id.3.400.jpg", kalori: 300, protein: 2, karbo: 38, lemak: 15 },
-            "8996001320037": { name: "Qtela Keripik Singkong Balado (60g)", image: "https://images.openfoodfacts.org/images/products/899/600/132/0037/front_id.3.400.jpg", kalori: 310, protein: 2, karbo: 39, lemak: 16 },
-            "8992952956295": { name: "Indomaret Mix Nuts (30g)", image: "https://images.openfoodfacts.org/images/products/899/295/295/6295/front_id.3.400.jpg", kalori: 190, protein: 5, karbo: 7, lemak: 16 },
-            "8994096223905": { name: "Indomaret Kacang Almond (30g)", image: "https://images.openfoodfacts.org/images/products/899/409/622/3905/front_id.3.400.jpg", kalori: 170, protein: 6, karbo: 6, lemak: 14 },
-            "8992753032129": { name: "SilverQueen Chocolate Cashew (58g)", image: "https://images.openfoodfacts.org/images/products/899/275/303/2129/front_id.3.400.jpg", kalori: 310, protein: 5, karbo: 31, lemak: 18 },
-            "8992753033102": { name: "SilverQueen Chunky Bar (30g)", image: "https://images.openfoodfacts.org/images/products/899/275/303/3102/front_id.3.400.jpg", kalori: 160, protein: 2, karbo: 16, lemak: 10 },
-            "8996001340011": { name: "Beng-beng Regular (20g)", image: "https://images.openfoodfacts.org/images/products/899/600/134/0011/front_id.3.400.jpg", kalori: 100, protein: 1, karbo: 14, lemak: 4 },
-            "8998000000201": { name: "Tango Wafer Cokelat (130g)", image: "https://images.openfoodfacts.org/images/products/899/800/000/0201/front_id.3.400.jpg", kalori: 630, protein: 7, karbo: 88, lemak: 27 },
-            "8996001380017": { name: "Roma Malkist Crackers (105g)", image: "https://images.openfoodfacts.org/images/products/899/600/138/0017/front_id.3.400.jpg", kalori: 450, protein: 8, karbo: 70, lemak: 15 },
-            "8992753075102": { name: "Pocky Chocolate (47g)", image: "https://images.openfoodfacts.org/images/products/899/275/307/5102/front_id.3.400.jpg", kalori: 220, protein: 4, karbo: 32, lemak: 9 },
-            "8997001430018": { name: "Sari Roti Roti Tawar Special (350g)", image: "https://images.openfoodfacts.org/images/products/899/700/143/0018/front_id.3.400.jpg", kalori: 900, protein: 24, karbo: 160, lemak: 14 },
-            "8886013700104": { name: "Mie Gemez Enaak (16g)", image: "https://images.openfoodfacts.org/images/products/888/601/370/0104/front_id.3.400.jpg", kalori: 80, protein: 1, karbo: 11, lemak: 4 },
-            "089686010947": { name: "Indomie Goreng Special (85g)", image: "https://images.openfoodfacts.org/images/products/089/686/010/947/front_id.3.400.jpg", kalori: 380, protein: 8, karbo: 54, lemak: 14 },
-            "089686014181": { name: "Indomie Soto Mie (70g)", image: "https://images.openfoodfacts.org/images/products/089/686/014/181/front_id.3.400.jpg", kalori: 340, protein: 7, karbo: 48, lemak: 13 },
-            "8998866200578": { name: "Mie Sedaap Goreng (90g)", image: "https://images.openfoodfacts.org/images/products/899/886/620/0578/front_id.3.400.jpg", kalori: 390, protein: 8, karbo: 56, lemak: 15 },
-            "8992753112234": { name: "Pop Mie Ayam Bawang (75g)", image: "https://images.openfoodfacts.org/images/products/899/275/311/2234/front_id.3.400.jpg", kalori: 330, protein: 6, karbo: 46, lemak: 13 },
-            "8992753112265": { name: "Pop Mie Goreng Special (80g)", image: "https://images.openfoodfacts.org/images/products/899/275/311/2265/front_id.3.400.jpg", kalori: 360, protein: 7, karbo: 50, lemak: 15 },
-            "8997214560012": { name: "Lemonilo Mie Instan Goreng (77g)", image: "https://images.openfoodfacts.org/images/products/899/721/456/0012/front_id.3.400.jpg", kalori: 320, protein: 7, karbo: 52, lemak: 9 },
-            "8801073111655": { name: "Samyang Hot Chicken Flavor Ramen (140g)", image: "https://images.openfoodfacts.org/images/products/880/107/311/1655/front_id.3.400.jpg", kalori: 550, protein: 12, karbo: 85, lemak: 16 },
-            "8991388102123": { name: "Aqua Air Mineral (600ml)", image: "https://images.openfoodfacts.org/images/products/899/138/810/2123/front_id.3.400.jpg", kalori: 0, protein: 0, karbo: 0, lemak: 0 },
-            "8991388102147": { name: "Aqua Air Mineral (1500ml)", image: "https://images.openfoodfacts.org/images/products/899/138/810/2147/front_id.3.400.jpg", kalori: 0, protein: 0, karbo: 0, lemak: 0 },
-            "8997033810017": { name: "Le Minerale Air Mineral (600ml)", image: "https://images.openfoodfacts.org/images/products/899/703/381/0017/front_id.3.400.jpg", kalori: 0, protein: 0, karbo: 0, lemak: 0 },
-            "8996001600146": { name: "Teh Pucuk Harum (350ml)", image: "https://images.openfoodfacts.org/images/products/899/600/160/0146/front_id.3.400.jpg", kalori: 120, protein: 0, karbo: 30, lemak: 0 },
-            "8996001600184": { name: "Teh Pucuk Harum (500ml)", image: "https://images.openfoodfacts.org/images/products/899/600/160/0184/front_id.3.400.jpg", kalori: 170, protein: 0, karbo: 42, lemak: 0 },
-            "8991002101036": { name: "Teh Botol Sosro (450ml)", image: "https://images.openfoodfacts.org/images/products/899/100/210/1036/front_id.3.400.jpg", kalori: 150, protein: 0, karbo: 38, lemak: 0 },
-            "8992753012015": { name: "Ultra Milk UHT Cokelat (250ml)", image: "https://images.openfoodfacts.org/images/products/899/275/301/2015/front_id.3.400.jpg", kalori: 160, protein: 7, karbo: 26, lemak: 4 },
-            "8992753011018": { name: "Ultra Milk UHT Full Cream (250ml)", image: "https://images.openfoodfacts.org/images/products/899/275/301/1018/front_id.3.400.jpg", kalori: 140, protein: 8, karbo: 14, lemak: 5 },
-            "8992753100101": { name: "Frisian Flag UHT Cokelat Kaleng (225ml)", image: "https://images.openfoodfacts.org/images/products/899/275/310/0101/front_id.3.400.jpg", kalori: 150, protein: 4, karbo: 23, lemak: 4.5 },
-            "8999999033411": { name: "Bear Brand Susu Steril (189ml)", image: "https://images.openfoodfacts.org/images/products/899/999/903/3411/front_id.3.400.jpg", kalori: 120, protein: 6, karbo: 9, lemak: 7 },
-            "8997025161028": { name: "Cimory Fresh Milk Cokelat (250ml)", image: "https://images.openfoodfacts.org/images/products/899/702/516/1028/front_id.3.400.jpg", kalori: 150, protein: 6, karbo: 22, lemak: 4 },
-            "8998866100120": { name: "Good Day Cappuccino Botol (250ml)", image: "https://images.openfoodfacts.org/images/products/899/886/610/0120/front_id.3.400.jpg", kalori: 140, protein: 2, karbo: 24, lemak: 3 },
-            "8997232230018": { name: "Kopi Kenangan Mantan Botol (220ml)", image: "https://images.openfoodfacts.org/images/products/899/723/223/0018/front_id.3.400.jpg", kalori: 130, protein: 3, karbo: 20, lemak: 4 },
-            "8999999037327": { name: "Milo Activ-Go UHT (180ml)", image: "https://images.openfoodfacts.org/images/products/899/999/903/3727/front_id.3.400.jpg", kalori: 110, protein: 3, karbo: 18, lemak: 3 },
-            "8993988111116": { name: "Coca Cola Botol (390ml)", image: "https://images.openfoodfacts.org/images/products/899/398/811/1116/front_id.3.400.jpg", kalori: 150, protein: 0, karbo: 39, lemak: 0 },
-            "8993988111222": { name: "Sprite Botol (390ml)", image: "https://images.openfoodfacts.org/images/products/899/398/811/1222/front_id.3.400.jpg", kalori: 140, protein: 0, karbo: 36, lemak: 0 }
-        };
+    <!-- Scanner / Input Barcode -->
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+      <h2 class="font-bold mb-3">Scan atau Cari Produk</h2>
+      <div class="flex gap-2">
+        <input type="text" id="barcodeInput" placeholder="Masukkan Barcode / Nama" class="flex-1 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+        <button onclick="searchProduct()" class="bg-primary text-white px-4 py-2 rounded-xl font-bold">Cari</button>
+      </div>
+    </div>
 
-        let dailyIntake = { cal: 0, carb: 0, fat: 0 };
-        let currentProduct = null;
-        let html5QrCode = null;
+    <!-- Product Result Card -->
+    <div id="resultCard" class="hidden bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-primary">
+      <div class="flex justify-between items-start mb-3">
+        <h3 id="resName" class="font-bold text-lg leading-tight">Nama Produk</h3>
+        <span id="badgeProtein" class="hidden bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded border border-yellow-300">💪 Tinggi Protein</span>
+      </div>
+      <div class="grid grid-cols-4 gap-2 text-center mb-4">
+        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-xs text-gray-500 dark:text-gray-400">Kalori</p><p id="resCal" class="font-bold text-red-500">-</p></div>
+        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-xs text-gray-500 dark:text-gray-400">Protein</p><p id="resPro" class="font-bold text-primary">-</p></div>
+        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-xs text-gray-500 dark:text-gray-400">Karbo</p><p id="resCarb" class="font-bold text-blue-500">-</p></div>
+        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-xs text-gray-500 dark:text-gray-400">Lemak</p><p id="resFat" class="font-bold text-orange-500">-</p></div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="addToDaily()" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold text-sm">Catat Konsumsi</button>
+        <button onclick="addToCompare()" class="bg-gray-200 dark:bg-gray-700 dark:text-white px-3 py-2 rounded-xl font-bold text-sm">Bandingkan</button>
+      </div>
+    </div>
 
-        function displayProduct(product) {
-            currentProduct = product;
-            document.getElementById('resultName').innerText = product.name;
-            document.getElementById('resultBarcode').innerText = product.barcode || "Verified";
-            document.getElementById('resultImage').src = product.image || "";
-            document.getElementById('resProtein').innerText = (product.protein || 0) + "g";
-            document.getElementById('resCal').innerText = product.kalori || 0;
-            document.getElementById('resCarb').innerText = (product.karbo || 0) + "g";
-            document.getElementById('resFat').innerText = (product.lemak || 0) + "g";
-            document.getElementById('resultContainer').classList.remove('hidden');
-            document.getElementById('statusMessage').classList.add('hidden');
+    <!-- Comparison Section -->
+    <div id="compareSection" class="hidden bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="font-bold">Perbandingan Produk</h2>
+        <button onclick="clearCompare()" class="text-xs text-red-500">Hapus</button>
+      </div>
+      <div id="compareGrid" class="grid grid-cols-2 gap-2 text-sm">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- Grafik & Ekspor -->
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="font-bold">Grafik 7 Hari Terakhir</h2>
+        <button onclick="exportWA()" class="bg-green-500 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 font-bold">
+          Ekspor ke WA
+        </button>
+      </div>
+      <canvas id="weeklyChart" width="400" height="200"></canvas>
+    </div>
+
+  </main>
+
+  <script>
+    // 1. Database Produk (Ditambah produk tinggi protein & gampang dicari)
+    const database = {
+      // Snack & Roti
+      "8997001430018": { name: "Sari Roti Tawar Spesial (350g)", cal: 900, pro: 24, carb: 160, fat: 14 },
+      "8992753033102": { name: "SilverQueen Chunky Bar", cal: 170, pro: 3, carb: 18, fat: 10 },
+      "8998000000201": { name: "Fitbar Multigrain", cal: 90, pro: 2, carb: 15, fat: 3 },
+      "8999000000002": { name: "Soyjoy Crispy", cal: 130, pro: 4, carb: 15, fat: 6 },
+      // Susu & Protein
+      "8992753011018": { name: "Ultra Milk Low Fat (250ml)", cal: 110, pro: 8, carb: 15, fat: 2 },
+      "8996001600207": { name: "L-Men 2Go (200ml)", cal: 140, pro: 12, carb: 18, fat: 3 },
+      "8991000000003": { name: "Cimory Yogurt Squeeze", cal: 120, pro: 4, carb: 20, fat: 3 },
+      "8999999033411": { name: "Bear Brand (189ml)", cal: 120, pro: 6, carb: 9, fat: 7 },
+      // Makanan Gym Minimarket
+      "2000000000001": { name: "Telur Rebus Indomaret (2 btr)", cal: 155, pro: 12, carb: 1, fat: 10 },
+      "2000000000002": { name: "Edamame Rebus Indomaret", cal: 120, pro: 11, carb: 10, fat: 5 },
+      "2000000000003": { name: "Dada Ayam Goreng (Bento)", cal: 250, pro: 25, carb: 5, fat: 12 },
+      // Minuman Ringan
+      "8997033810017": { name: "Le Minerale (600ml)", cal: 0, pro: 0, carb: 0, fat: 0 },
+      "8991388102123": { name: "Aqua Air Mineral (600ml)", cal: 0, pro: 0, carb: 0, fat: 0 }
+    };
+
+    // State Variables
+    let today = new Date().toISOString().split('T')[0];
+    let dailyLog = JSON.parse(localStorage.getItem('dailyLog')) || { cal: 0, pro: 0, carb: 0, fat: 0, date: today };
+    let targets = JSON.parse(localStorage.getItem('targets')) || { cal: 2000, pro: 85 }; // Default target protein 85g
+    let currentScanned = null;
+    let compareList = [];
+
+    // 2. Inisialisasi Aplikasi
+    function initApp() {
+      checkStreak();
+      checkNewDay();
+      updateProgress();
+      setupTheme();
+      renderChart();
+    }
+
+    // 3. Mode Gelap Terang
+    function setupTheme() {
+      const toggle = document.getElementById('themeToggle');
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        toggle.innerText = '☀️';
+      }
+      toggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        if (document.documentElement.classList.contains('dark')) {
+          localStorage.setItem('theme', 'dark');
+          toggle.innerText = '☀️';
+        } else {
+          localStorage.setItem('theme', 'light');
+          toggle.innerText = '🌙';
         }
+      });
+    }
 
-        async function lookupProduct(code) {
-            code = code.trim();
-            if (!code) return;
-            document.getElementById('resultContainer').classList.add('hidden');
-            document.getElementById('statusMessage').classList.remove('hidden');
+    // 4. Mode Tantangan (Streak)
+    function checkStreak() {
+      let streak = parseInt(localStorage.getItem('streak') || 0);
+      let lastLogin = localStorage.getItem('lastLogin');
+      
+      let yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      let yesterdayStr = yesterday.toISOString().split('T')[0];
 
-            if (mockProducts[code]) {
-                displayProduct({ ...mockProducts[code], barcode: code });
-                return;
-            }
+      if (lastLogin === yesterdayStr) {
+        streak++;
+      } else if (lastLogin !== today) {
+        streak = 1; // Reset jika bolong
+      }
+      
+      localStorage.setItem('streak', streak);
+      localStorage.setItem('lastLogin', today);
+      document.getElementById('streakCount').innerText = streak;
+    }
 
-            try {
-                let res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`);
-                let data = await res.json();
-                if (data.status === 1 && data.product) {
-                    let p = data.product;
-                    let nut = p.nutriments || {};
-                    displayProduct({
-                        name: p.product_name_id || p.product_name || `Produk ${code}`,
-                        image: p.image_front_url || "",
-                        kalori: Math.round(nut['energy-kcal_100g'] || 0),
-                        protein: Math.round(nut['protein_100g'] || 0),
-                        karbo: Math.round(nut['carbohydrates_100g'] || 0),
-                        lemak: Math.round(nut['fat_100g'] || 0),
-                        barcode: code
-                    });
-                    return;
-                }
-            } catch (e) {}
-
-            document.getElementById('statusMessage').classList.add('hidden');
-            alert("Produk tidak ditemukan.");
-        }
-
-        document.getElementById('searchBtn').addEventListener('click', () => lookupProduct(document.getElementById('barcodeInput').value));
-        document.getElementById('barcodeInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') lookupProduct(e.target.value); });
+    function checkNewDay() {
+      if (dailyLog.date !== today) {
+        // Simpan data kemarin ke history chart
+        let history = JSON.parse(localStorage.getItem('history')) || [];
+        history.push({ date: dailyLog.date, cal: dailyLog.cal, pro: dailyLog.pro });
+        if (history.length > 7) history.shift();
+        localStorage.setItem('history', JSON.stringify(history));
         
-        document.getElementById('addLogBtn').addEventListener('click', () => {
-            if (!currentProduct) return;
-            dailyIntake.cal += currentProduct.kalori;
-            dailyIntake.carb += currentProduct.karbo;
-            dailyIntake.fat += currentProduct.lemak;
-            document.getElementById('totalCal').innerHTML = `${dailyIntake.cal} <span class="text-xs">kcal</span>`;
-            document.getElementById('totalCarb').innerHTML = `${dailyIntake.carb} <span class="text-xs">g</span>`;
-            document.getElementById('totalFat').innerHTML = `${dailyIntake.fat} <span class="text-xs">g</span>`;
-            document.getElementById('resultContainer').classList.add('hidden');
-            document.getElementById('barcodeInput').value = "";
-            alert("Berhasil dicatat!");
-        });
+        // Reset harian
+        dailyLog = { cal: 0, pro: 0, carb: 0, fat: 0, date: today };
+        localStorage.setItem('dailyLog', JSON.stringify(dailyLog));
+      }
+    }
 
-        document.getElementById('scanCameraBtn').addEventListener('click', () => {
-            document.getElementById('scannerModal').classList.remove('hidden');
-            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (text) => {
-                html5QrCode.stop().then(() => document.getElementById('scannerModal').classList.add('hidden'));
-                document.getElementById('barcodeInput').value = text;
-                lookupProduct(text);
-            }, () => {});
-        });
+    // 5. Pencarian & Badge Protein
+    function searchProduct() {
+      const input = document.getElementById('barcodeInput').value.toLowerCase();
+      let found = database[input];
 
-        document.getElementById('closeScannerBtn').addEventListener('click', () => {
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => document.getElementById('scannerModal').classList.add('hidden'));
-            } else {
-                document.getElementById('scannerModal').classList.add('hidden');
+      // Fitur cari berdasarkan nama juga!
+      if (!found) {
+        for (let key in database) {
+          if (database[key].name.toLowerCase().includes(input)) {
+            found = database[key];
+            break;
+          }
+        }
+      }
+
+      if (found) {
+        currentScanned = found;
+        document.getElementById('resName').innerText = found.name;
+        document.getElementById('resCal').innerText = found.cal;
+        document.getElementById('resPro').innerText = found.pro + "g";
+        document.getElementById('resCarb').innerText = found.carb + "g";
+        document.getElementById('resFat').innerText = found.fat + "g";
+        
+        // Menampilkan Lencana "Tinggi Protein" jika protein >= 10g
+        const badge = document.getElementById('badgeProtein');
+        if (found.pro >= 10) {
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+
+        document.getElementById('resultCard').classList.remove('hidden');
+      } else {
+        alert("Produk tidak ditemukan! Coba masukkan kata kunci yang lebih spesifik.");
+      }
+    }
+
+    function addToDaily() {
+      if (!currentScanned) return;
+      dailyLog.cal += currentScanned.cal;
+      dailyLog.pro += currentScanned.pro;
+      dailyLog.carb += currentScanned.carb;
+      dailyLog.fat += currentScanned.fat;
+      localStorage.setItem('dailyLog', JSON.stringify(dailyLog));
+      updateProgress();
+      document.getElementById('resultCard').classList.add('hidden');
+      document.getElementById('barcodeInput').value = '';
+      alert(`${currentScanned.name} berhasil dicatat!`);
+    }
+
+    // 6. Progress Target Harian
+    function updateProgress() {
+      const calPercent = Math.min((dailyLog.cal / targets.cal) * 100, 100);
+      const proPercent = Math.min((dailyLog.pro / targets.pro) * 100, 100);
+      
+      document.getElementById('calBar').style.width = calPercent + "%";
+      document.getElementById('proBar').style.width = proPercent + "%";
+      
+      document.getElementById('calText').innerText = `${dailyLog.cal} / ${targets.cal} kcal`;
+      document.getElementById('proText').innerText = `${dailyLog.pro} / ${targets.pro} g`;
+    }
+
+    // Kalkulator TDEE Sederhana
+    function toggleCalc() {
+      document.getElementById('calcBox').classList.toggle('hidden');
+    }
+
+    function calculateTDEE() {
+      const weight = document.getElementById('calcWeight').value;
+      const height = document.getElementById('calcHeight').value;
+      if (weight && height) {
+        // Rumus sederhana TDEE
+        const bmr = (10 * weight) + (6.25 * height) - (5 * 16) + 5; // Asumsi laki-laki umur 16th
+        const tdee = Math.round(bmr * 1.55); // Aktivitas moderat (gym)
+        const proTarget = Math.round(weight * 1.8); // 1.8g protein per kg berat badan
+        
+        targets = { cal: tdee, pro: proTarget };
+        localStorage.setItem('targets', JSON.stringify(targets));
+        updateProgress();
+        toggleCalc();
+        alert(`Target harian diperbarui!\nKalori: ${tdee} kcal\nProtein: ${proTarget} g`);
+      }
+    }
+
+    // 7. Bandingkan Produk
+    function addToCompare() {
+      if (!currentScanned) return;
+      if (compareList.length >= 2) {
+        alert("Maksimal bandingkan 2 produk!");
+        return;
+      }
+      compareList.push(currentScanned);
+      renderCompare();
+      document.getElementById('resultCard').classList.add('hidden');
+    }
+
+    function renderCompare() {
+      const grid = document.getElementById('compareGrid');
+      const section = document.getElementById('compareSection');
+      if (compareList.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+      
+      section.classList.remove('hidden');
+      grid.innerHTML = '';
+      
+      compareList.forEach(item => {
+        grid.innerHTML += `
+          <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg border dark:border-gray-600">
+            <p class="font-bold text-xs truncate">${item.name}</p>
+            <p class="text-xs mt-1">Kal: ${item.cal} | Pro: <span class="text-primary font-bold">${item.pro}g</span></p>
+          </div>
+        `;
+      });
+    }
+
+    function clearCompare() {
+      compareList = [];
+      renderCompare();
+    }
+
+    // 8. Ekspor ke WhatsApp
+    function exportWA() {
+      const text = `*Catatan Nutrisi Hari Ini (NutriScan)*\n🔥 Streak: ${localStorage.getItem('streak')} Hari\n\n📊 Total Kalori: ${dailyLog.cal} / ${targets.cal} kcal\n💪 Total Protein: ${dailyLog.pro} / ${targets.pro} g\n\nSemangat penuhi target!`;
+      const waLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+      window.open(waLink, '_blank');
+    }
+
+    // 9. Grafik Mingguan Chart.js
+    function renderChart() {
+      let history = JSON.parse(localStorage.getItem('history')) || [];
+      // Buat data tiruan jika history kosong agar chart terlihat bagus
+      if (history.length === 0) {
+        history = [
+          { date: "H-4", cal: 1800, pro: 70 },
+          { date: "H-3", cal: 2100, pro: 85 },
+          { date: "H-2", cal: 1950, pro: 80 },
+          { date: "H-1", cal: 2050, pro: 90 }
+        ];
+      }
+      
+      const labels = history.map(h => h.date);
+      const calData = history.map(h => h.cal);
+      const proData = history.map(h => h.pro);
+
+      const ctx = document.getElementById('weeklyChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Protein (g)',
+              data: proData,
+              backgroundColor: '#3b82f6',
+              type: 'line',
+              tension: 0.3
+            },
+            {
+              label: 'Kalori (kcal)',
+              data: calData,
+              backgroundColor: '#10b981',
+              borderRadius: 4
             }
-        });
-    </script>
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    // Jalankan saat web dimuat
+    initApp();
+  </script>
 </body>
 </html>
