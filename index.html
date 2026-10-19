@@ -242,20 +242,27 @@
                     }
                 } 
                 else if (urlTarget.includes('instagram.com')) {
-                    const apiURL = `https://instagram-api-media-downloader.p.rapidapi.com/rapidapi.php?url=${encodeURIComponent(urlTarget)}`;
+                    const apiURL = `https://instagram-downloader51.p.rapidapi.com/dl?url=${encodeURIComponent(urlTarget)}`;
                     const response = await fetch(apiURL, {
                         method: 'GET',
                         headers: {
                             'X-RapidAPI-Key': '39c91500ffmsha22cee5043214eep1b00dcjsn9bd0f2a7a005',
-                            'X-RapidAPI-Host': 'instagram-api-media-downloader.p.rapidapi.com'
+                            'X-RapidAPI-Host': 'instagram-downloader51.p.rapidapi.com'
                         }
                     });
                     const result = await response.json();
 
-                    if (result && (result.data || result.url || result.result)) {
-                        let mediaList = result.data || result.result || result.url;
-                        if (!Array.isArray(mediaList)) mediaList = [mediaList];
+                    // Menyesuaikan struktur data response dari API instagram-downloader51
+                    let mediaList = [];
+                    if (result && result.link) {
+                        mediaList = Array.isArray(result.link) ? result.link : [result.link];
+                    } else if (result && result.data) {
+                        mediaList = Array.isArray(result.data) ? result.data : [result.data];
+                    } else if (result && result.url) {
+                        mediaList = Array.isArray(result.url) ? result.url : [result.url];
+                    }
 
+                    if (mediaList.length > 0) {
                         let htmlContent = "";
                         mediaList.forEach((item, index) => {
                             let mediaUrl = typeof item === 'string' ? item : (item.url || item.download_url);
