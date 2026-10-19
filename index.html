@@ -242,19 +242,18 @@
                     }
                 } 
                 else if (urlTarget.includes('instagram.com')) {
-                    const apiURL = `https://instagram-downloader-download-instagram-stories-videos4.p.rapidapi.com/dl?url=${encodeURIComponent(urlTarget)}`;
+                    const apiURL = `https://instagram-api-media-downloader.p.rapidapi.com/rapidapi.php?url=${encodeURIComponent(urlTarget)}`;
                     const response = await fetch(apiURL, {
                         method: 'GET',
                         headers: {
                             'X-RapidAPI-Key': '39c91500ffmsha22cee5043214eep1b00dcjsn9bd0f2a7a005',
-                            'X-RapidAPI-Host': 'instagram-downloader-download-instagram-stories-videos4.p.rapidapi.com'
+                            'X-RapidAPI-Host': 'instagram-api-media-downloader.p.rapidapi.com'
                         }
                     });
                     const result = await response.json();
 
-                    // Menyesuaikan struktur data response RapidAPI Instagram
                     if (result && (result.data || result.url || result.result)) {
-                        let mediaList = result.data || result.result || [result.url];
+                        let mediaList = result.data || result.result || result.url;
                         if (!Array.isArray(mediaList)) mediaList = [mediaList];
 
                         let htmlContent = "";
