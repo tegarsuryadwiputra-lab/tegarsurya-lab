@@ -1,446 +1,293 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NutriScan - Indomaret Edition</title>
-  <link rel="manifest" href="manifest.json">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: { extend: { colors: { primary: '#10b981' } } }
-    }
-  </script>
-  <style>
-    body { transition: background-color 0.3s, color 0.3s; }
-    ::-webkit-scrollbar { display: none; }
-    #reader { width: 100%; border-radius: 1rem; overflow: hidden; border: none !important; }
-    #reader video { object-fit: cover; border-radius: 1rem; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok & Instagram All-in-One Downloader</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 5px;
+            color: #25F4EE;
+        }
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 40px 14px 14px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            background: #0f172a;
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+            font-size: 14px;
+        }
+        input[type="text"]:focus {
+            border-color: #25F4EE;
+        }
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+            width: auto;
+        }
+        .clear-btn:hover {
+            color: #fff;
+        }
+        button.main-btn {
+            width: 100%;
+            padding: 14px;
+            background: #fe2c55;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.main-btn:hover {
+            background: #e0244c;
+        }
+        #resultDiv {
+            margin-top: 25px;
+            max-height: 450px;
+            overflow-y: auto;
+            text-align: left;
+        }
+        .media-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .media-card img, .media-card video {
+            width: 100%;
+            max-height: 280px;
+            border-radius: 6px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            background: #000;
+        }
+        .btn-download {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #25F4EE;
+            color: #0f172a;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-download:hover {
+            background: #1ddad5;
+        }
+        .btn-audio {
+            background: #a855f7;
+            color: #fff;
+        }
+        .badge {
+            display: inline-block;
+            background: #334155;
+            color: #25F4EE;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #334155;
+            padding-top: 15px;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 pb-24">
+<body>
 
-  <!-- ================= LOGIN PAGE ================= -->
-  <div id="loginPage" class="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col items-center justify-center px-6 transition-opacity duration-500">
-    <div class="bg-primary text-white p-4 rounded-2xl mb-4 shadow-lg">
-      <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+    <div class="container">
+        <h2>AIO Downloader</h2>
+        <p class="subtitle">TikTok & Instagram Downloader.<br><i>Tempel tautan dari aplikasi resmi.</i></p>
+        
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="Tempel link TikTok / IG...">
+            <button class="clear-btn" onclick="clearInput()" title="Hapus teks">✕</button>
+        </div>
+        <button class="main-btn" id="btnProcess" onclick="prosesEkstrak()">Proses & Ambil Media</button>
+        
+        <div id="resultDiv"></div>
+
+        <div class="footer">
+            Created with ⚡ for Fast & Clean Downloading
+        </div>
     </div>
-    <h1 class="text-3xl font-bold text-primary mb-2">NutriScan</h1>
-    <p class="text-gray-500 dark:text-gray-400 mb-8 text-center text-sm">Lacak nutrisi harianmu dari produk Indomaret dengan mudah.</p>
-    
-    <div class="w-full max-w-sm bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border dark:border-gray-700 shadow-sm">
-      <h2 class="font-bold mb-4 text-lg">Sign In Profil</h2>
-      <input type="text" id="loginName" placeholder="Masukkan Nama Kamu..." class="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary mb-4">
-      <button onclick="handleLogin()" class="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-md active:scale-95 transition-transform">Mulai Sekarang</button>
-    </div>
-  </div>
 
-  <!-- ================= MAIN APP ================= -->
-  <div id="mainApp" class="hidden opacity-0 transition-opacity duration-500">
-    
-    <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
-      <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm" id="avatarName">N</div>
-          <div>
-            <p class="text-[10px] text-gray-500 font-bold -mb-1">Halo,</p>
-            <h1 class="font-bold text-base text-primary leading-tight" id="greetName">User</h1>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <div class="flex items-center text-orange-500 font-bold bg-orange-100 dark:bg-gray-700 px-2 py-1 rounded-full text-sm">
-            🔥 <span id="streakCount">0</span> Hari
-          </div>
-          <button id="themeToggle" class="p-2 bg-gray-100 dark:bg-gray-700 rounded-full">🌙</button>
-          <button onclick="handleLogout()" class="p-2 text-red-500 bg-red-50 dark:bg-gray-700 rounded-full">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-          </button>
-        </div>
-      </div>
-    </header>
+    <script>
+        function clearInput() {
+            document.getElementById('urlInput').value = '';
+            document.getElementById('urlInput').focus();
+        }
 
-    <main class="max-w-md mx-auto px-4 mt-4 relative">
+        async function downloadFile(fileUrl, filename) {
+            try {
+                alert("Mengunduh file, mohon tunggu sebentar...");
+                const response = await fetch(fileUrl);
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                
+                window.URL.revokeObjectURL(blobUrl);
+                document.body.removeChild(a);
+            } catch (error) {
+                console.error("Gagal mendownload otomatis, membuka tautan cadangan...", error);
+                window.open(fileUrl, '_blank');
+            }
+        }
 
-      <!-- HALAMAN 1: SCAN -->
-      <section id="page-scan" class="page-section">
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
-          <div class="flex justify-between items-center mb-3">
-            <h2 class="font-bold text-lg">Pindai Barcode</h2>
-            <button id="startCamBtn" onclick="startCamera()" class="bg-primary text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-md">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
-              Buka Kamera
-            </button>
-          </div>
-          
-          <div id="reader" class="hidden mb-3 bg-gray-100 dark:bg-gray-900 rounded-xl"></div>
-          
-          <div class="relative flex py-2 items-center">
-            <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
-            <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">Atau ketik manual</span>
-            <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
-          </div>
+        async function prosesEkstrak() {
+            const urlTarget = document.getElementById('urlInput').value.trim();
+            const btn = document.getElementById('btnProcess');
+            const resultDiv = document.getElementById('resultDiv');
 
-          <div class="flex gap-2 mt-2">
-            <input type="text" id="barcodeInput" placeholder="Ketik Kode / Nama..." class="flex-1 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary w-full text-sm">
-            <button onclick="searchProduct()" class="bg-gray-200 dark:bg-gray-600 dark:text-white px-5 py-3 rounded-xl font-bold text-sm">Cari</button>
-          </div>
-        </div>
+            if (!urlTarget) {
+                alert("Masukkan link terlebih dahulu!");
+                return;
+            }
 
-        <div id="resultCard" class="hidden bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-primary">
-          <div class="flex justify-between items-start mb-3">
-            <h3 id="resName" class="font-bold text-lg leading-tight">Nama Produk</h3>
-            <span id="badgeProtein" class="hidden bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded border border-yellow-300 whitespace-nowrap">💪 Tinggi Protein</span>
-          </div>
-          <div class="grid grid-cols-4 gap-2 text-center mb-4">
-            <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Kalori</p><p id="resCal" class="font-bold text-red-500">-</p></div>
-            <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Protein</p><p id="resPro" class="font-bold text-primary">-</p></div>
-            <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Karbo</p><p id="resCarb" class="font-bold text-blue-500">-</p></div>
-            <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded-lg"><p class="text-[10px] text-gray-500">Lemak</p><p id="resFat" class="font-bold text-orange-500">-</p></div>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="addToDaily()" class="flex-1 bg-primary text-white py-3 rounded-xl font-bold text-sm shadow-md">Catat Konsumsi</button>
-            <button onclick="addToCompare()" class="bg-gray-200 dark:bg-gray-700 dark:text-white px-3 py-3 rounded-xl font-bold text-sm">Bandingkan</button>
-          </div>
-        </div>
-      </section>
+            btn.innerText = "Memproses Media...";
+            btn.disabled = true;
+            resultDiv.innerHTML = "";
 
-      <!-- HALAMAN 2: TARGET & JADWAL -->
-      <section id="page-target" class="page-section hidden">
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700 mb-4">
-          
-          <!-- Fitur Jadwal Kalender Mingguan -->
-          <div class="mb-5 border-b dark:border-gray-700 pb-4">
-            <div class="flex justify-between items-center mb-3">
-              <h3 class="font-bold text-sm">📅 Jadwal Latihan Mingguan</h3>
-              <span class="text-[10px] text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">Ketuk untuk ubah</span>
-            </div>
-            
-            <div id="scheduleGrid" class="grid grid-cols-7 gap-1">
-              <!-- Diisi otomatis oleh JavaScript -->
-            </div>
-            <p id="todayStatusText" class="text-xs text-center mt-3 text-primary font-bold">Hari ini: Mode Latihan 🏋️</p>
-          </div>
+            try {
+                if (urlTarget.includes('tiktok.com')) {
+                    const apiURL = `https://www.tikwm.com/api/?url=${encodeURIComponent(urlTarget)}`;
+                    const response = await fetch(apiURL);
+                    const result = await response.json();
 
-          <!-- Kalkulator & Progress -->
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="font-bold text-lg">Target Hari Ini</h2>
-            <button onclick="toggleCalc()" class="text-xs text-primary bg-green-50 dark:bg-gray-700 px-3 py-1.5 rounded-lg font-bold">Ubah Dasar</button>
-          </div>
-          
-          <div id="calcBox" class="hidden mb-5 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm border dark:border-gray-600">
-            <p class="font-bold mb-3 text-center">Hitung Base Target (Rest Day)</p>
-            <div class="grid grid-cols-2 gap-3 mb-3">
-              <input type="number" id="calcWeight" placeholder="Berat (kg)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
-              <input type="number" id="calcHeight" placeholder="Tinggi (cm)" class="p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-600 w-full text-center">
-            </div>
-            <button onclick="calculateTDEE()" class="w-full bg-primary text-white rounded-lg p-3 font-bold shadow">Simpan Target</button>
-          </div>
-          
-          <div>
-            <div class="flex justify-between text-sm mb-1">
-              <span class="font-medium">Kalori</span>
-              <span id="calText" class="font-bold text-primary">0 / 2000 kcal</span>
-            </div>
-            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-4 overflow-hidden">
-              <div id="calBar" class="bg-primary h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-            <div class="flex justify-between text-sm mb-1">
-              <span class="font-medium">Protein</span>
-              <span id="proText" class="font-bold text-blue-500">0 / 80 g</span>
-            </div>
-            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
-              <div id="proBar" class="bg-blue-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-          </div>
-        </div>
-      </section>
+                    if (result.code === 0 && result.data) {
+                        let htmlContent = "";
+                        if (result.data.images && result.data.images.length > 0) {
+                            result.data.images.forEach((imgUrl, index) => {
+                                htmlContent += `
+                                    <div class="media-card">
+                                        <div class="badge">TikTok Foto Slide ${index + 1}</div>
+                                        <img src="${imgUrl}" alt="Slide ${index + 1}">
+                                        <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${index + 1}.jpg')">Download Foto ${index + 1}</button>
+                                    </div>
+                                `;
+                            });
+                        } else if (result.data.play) {
+                            htmlContent += `
+                                <div class="media-card">
+                                    <div class="badge">Video TikTok</div>
+                                    <video controls src="${result.data.play}"></video>
+                                    <button class="btn-download" onclick="downloadFile('${result.data.play}', 'tiktok_video.mp4')">Download Video (HD)</button>
+                                    ${result.data.music ? `<button class="btn-download btn-audio" onclick="downloadFile('${result.data.music}', 'tiktok_audio.mp3')">Download Audio (MP3)</button>` : ''}
+                                </div>
+                            `;
+                        }
+                        resultDiv.innerHTML = htmlContent;
+                    } else {
+                        alert("Gagal mengambil data TikTok. Pastikan link benar!");
+                    }
+                } 
+                else if (urlTarget.includes('instagram.com')) {
+                    const apiURL = `https://instagram-downloader-download-instagram-stories-videos4.p.rapidapi.com/dl?url=${encodeURIComponent(urlTarget)}`;
+                    const response = await fetch(apiURL, {
+                        method: 'GET',
+                        headers: {
+                            'X-RapidAPI-Key': '39c91500ffmsha22cee5043214eep1b00dcjsn9bd0f2a7a005',
+                            'X-RapidAPI-Host': 'instagram-downloader-download-instagram-stories-videos4.p.rapidapi.com'
+                        }
+                    });
+                    const result = await response.json();
 
-      <!-- HALAMAN 3 & 4 (Bandingkan & Grafik) -->
-      <section id="page-compare" class="page-section hidden">
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="font-bold text-lg">Adu Produk</h2>
-            <button onclick="clearCompare()" class="text-xs bg-red-100 text-red-600 px-3 py-1.5 rounded-lg font-bold">Bersihkan</button>
-          </div>
-          <p id="compareEmpty" class="text-sm text-center text-gray-500 py-6">Belum ada produk. Cari produk di halaman Scan lalu klik "Bandingkan".</p>
-          <div id="compareGrid" class="grid grid-cols-2 gap-3 text-sm hidden"></div>
-        </div>
-      </section>
+                    // Menyesuaikan struktur data response RapidAPI Instagram
+                    if (result && (result.data || result.url || result.result)) {
+                        let mediaList = result.data || result.result || [result.url];
+                        if (!Array.isArray(mediaList)) mediaList = [mediaList];
 
-      <section id="page-stats" class="page-section hidden">
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border dark:border-gray-700">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="font-bold text-lg">Statistik 7 Hari</h2>
-            <button onclick="exportWA()" class="bg-green-500 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 font-bold shadow">Ekspor WA</button>
-          </div>
-          <div class="relative w-full h-56"><canvas id="weeklyChart"></canvas></div>
-        </div>
-      </section>
-
-    </main>
-
-    <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border-t dark:border-gray-700 flex justify-around p-3 pb-4 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-      <button onclick="switchTab('page-scan', this)" class="nav-btn flex flex-col items-center text-primary w-1/4">
-        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        <span class="text-[10px] font-bold">Scan</span>
-      </button>
-      <button onclick="switchTab('page-target', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
-        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-        <span class="text-[10px] font-bold">Target</span>
-      </button>
-      <button onclick="switchTab('page-compare', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
-        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-        <span class="text-[10px] font-bold">Bandingkan</span>
-      </button>
-      <button onclick="switchTab('page-stats', this)" class="nav-btn flex flex-col items-center text-gray-400 w-1/4">
-        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
-        <span class="text-[10px] font-bold">Grafik</span>
-      </button>
-    </nav>
-  </div> 
-
-  <script>
-    // DATABASE
-    const database = {
-      "8992753033102": { name: "SilverQueen Chunky", cal: 170, pro: 3, carb: 18, fat: 10 },
-      "8996001340011": { name: "Beng-beng Regular", cal: 110, pro: 1, carb: 16, fat: 5 },
-      "8992753075102": { name: "Pocky Choco", cal: 100, pro: 2, carb: 14, fat: 4 },
-      "8999000000002": { name: "Soyjoy Crispy", cal: 130, pro: 4, carb: 15, fat: 6 },
-      "8997001430018": { name: "Sari Roti Tawar Spesial", cal: 900, pro: 24, carb: 160, fat: 14 },
-      "089686010947": { name: "Indomie Goreng", cal: 380, pro: 8, carb: 54, fat: 14 },
-      "8996001600146": { name: "Teh Pucuk Harum", cal: 80, pro: 0, carb: 20, fat: 0 },
-      "8992753011018": { name: "Ultra Milk Low Fat", cal: 110, pro: 8, carb: 15, fat: 2 },
-      "8996001600207": { name: "L-Men 2Go", cal: 140, pro: 12, carb: 18, fat: 3 },
-      "2000000000001": { name: "Telur Rebus Indomaret", cal: 155, pro: 12, carb: 1, fat: 10 },
-      "2000000000002": { name: "Edamame Rebus", cal: 120, pro: 11, carb: 10, fat: 5 },
-      "2000000000003": { name: "Dada Ayam Goreng", cal: 250, pro: 25, carb: 5, fat: 12 }
-    };
-
-    let today = new Date().toISOString().split('T')[0];
-    let dailyLog = JSON.parse(localStorage.getItem('dailyLog')) || { cal: 0, pro: 0, carb: 0, fat: 0, date: today };
-    let targets = JSON.parse(localStorage.getItem('targets')) || { cal: 2000, pro: 85 }; 
-    
-    // Array Jadwal Mingguan (0=Minggu, 1=Senin, dst). Default: Sen, Rab, Jum nge-gym.
-    let gymSchedule = JSON.parse(localStorage.getItem('gymSchedule')) || [false, true, false, true, false, true, false];
-    let isGymDay = false; // Akan dikalkulasi dari gymSchedule
-    
-    let currentScanned = null;
-    let compareList = [];
-    let chartInstance = null;
-    let html5QrcodeScanner = null;
-
-    function checkLogin() {
-      const userName = localStorage.getItem('nutriUserName');
-      if (userName) {
-        document.getElementById('greetName').innerText = userName;
-        document.getElementById('avatarName').innerText = userName.charAt(0).toUpperCase();
-        document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('mainApp').classList.remove('hidden');
-        setTimeout(() => document.getElementById('mainApp').classList.remove('opacity-0'), 50);
-        initApp();
-      } else {
-        document.getElementById('loginPage').classList.remove('hidden');
-        document.getElementById('mainApp').classList.add('hidden');
-      }
-    }
-
-    function handleLogin() {
-      const nameInput = document.getElementById('loginName').value.trim();
-      if (nameInput === '') return alert('Masukkan nama kamu dulu ya!');
-      localStorage.setItem('nutriUserName', nameInput);
-      document.getElementById('loginPage').classList.add('opacity-0');
-      setTimeout(checkLogin, 500);
-    }
-    function handleLogout() {
-      if(confirm('Yakin ingin keluar profil? Data harianmu tetap aman.')) {
-        localStorage.removeItem('nutriUserName'); location.reload();
-      }
-    }
-
-    function startCamera() {
-      const readerDiv = document.getElementById('reader');
-      const startBtn = document.getElementById('startCamBtn');
-      if (html5QrcodeScanner) {
-        html5QrcodeScanner.clear(); html5QrcodeScanner = null;
-        readerDiv.classList.add('hidden'); startBtn.innerHTML = `Buka Kamera`; startBtn.classList.replace('bg-red-500', 'bg-primary'); return;
-      }
-      readerDiv.classList.remove('hidden'); startBtn.innerHTML = `Tutup Kamera`; startBtn.classList.replace('bg-primary', 'bg-red-500');
-      html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 150} }, false);
-      html5QrcodeScanner.render((decodedText) => {
-        document.getElementById('barcodeInput').value = decodedText; 
-        html5QrcodeScanner.clear(); html5QrcodeScanner = null;
-        readerDiv.classList.add('hidden'); startBtn.innerHTML = `Buka Kamera`; startBtn.classList.replace('bg-red-500', 'bg-primary');
-        searchProduct();
-      }, (err) => {});
-    }
-
-    // RENDER JADWAL MINGGUAN
-    function renderSchedule() {
-      const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-      const container = document.getElementById('scheduleGrid');
-      const todayIndex = new Date().getDay();
-      
-      container.innerHTML = '';
-      days.forEach((day, index) => {
-        const isGym = gymSchedule[index];
-        const isToday = index === todayIndex;
-        container.innerHTML += `
-          <button onclick="toggleDay(${index})" class="flex flex-col items-center py-2 rounded-lg border transition-colors ${isGym ? 'bg-primary text-white border-primary' : 'bg-gray-50 dark:bg-gray-700 text-gray-400 border-gray-200 dark:border-gray-600'} ${isToday ? 'ring-2 ring-orange-400 ring-offset-1 dark:ring-offset-gray-800' : ''}">
-            <span class="text-[10px] font-bold mb-1">${day}</span>
-            <span class="text-sm">${isGym ? '🏋️' : '🛌'}</span>
-          </button>
-        `;
-      });
-
-      // Set mode hari ini secara otomatis
-      isGymDay = gymSchedule[todayIndex];
-      const statusText = document.getElementById('todayStatusText');
-      if(isGymDay) {
-        statusText.innerText = "Hari ini: Mode Latihan 🏋️ (+300 Kcal, +20g Pro)";
-        statusText.className = "text-xs text-center mt-3 text-primary font-bold";
-      } else {
-        statusText.innerText = "Hari ini: Mode Istirahat 🛌 (Target Normal)";
-        statusText.className = "text-xs text-center mt-3 text-gray-500 font-bold";
-      }
-      
-      updateProgress();
-    }
-
-    function toggleDay(index) {
-      gymSchedule[index] = !gymSchedule[index];
-      localStorage.setItem('gymSchedule', JSON.stringify(gymSchedule));
-      renderSchedule(); // Render ulang dan otomatis update progress bar
-    }
-
-    function initApp() {
-      checkStreak(); checkNewDay();
-      renderSchedule(); // Render kalender jadwal
-      setupTheme(); renderChart();
-    }
-
-    function switchTab(tabId, btnElement) {
-      document.querySelectorAll('.page-section').forEach(page => page.classList.add('hidden'));
-      document.getElementById(tabId).classList.remove('hidden');
-      document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('text-primary'); btn.classList.add('text-gray-400'); });
-      btnElement.classList.remove('text-gray-400'); btnElement.classList.add('text-primary');
-      if(tabId === 'page-stats' && chartInstance) chartInstance.resize();
-    }
-
-    function setupTheme() {
-      const toggle = document.getElementById('themeToggle');
-      if (localStorage.getItem('theme') === 'dark') { document.documentElement.classList.add('dark'); toggle.innerText = '☀️'; }
-      toggle.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-        if (document.documentElement.classList.contains('dark')) { localStorage.setItem('theme', 'dark'); toggle.innerText = '☀️'; } 
-        else { localStorage.setItem('theme', 'light'); toggle.innerText = '🌙'; }
-      });
-    }
-
-    function checkStreak() {
-      let streak = parseInt(localStorage.getItem('streak') || 0); let lastLogin = localStorage.getItem('lastLogin');
-      let yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-      let yesterdayStr = yesterday.toISOString().split('T')[0];
-      if (lastLogin === yesterdayStr) streak++; else if (lastLogin !== today) streak = 1;
-      localStorage.setItem('streak', streak); localStorage.setItem('lastLogin', today);
-      document.getElementById('streakCount').innerText = streak;
-    }
-
-    function checkNewDay() {
-      if (dailyLog.date !== today) {
-        let history = JSON.parse(localStorage.getItem('history')) || [];
-        history.push({ date: dailyLog.date, cal: dailyLog.cal, pro: dailyLog.pro });
-        if (history.length > 7) history.shift();
-        localStorage.setItem('history', JSON.stringify(history));
-        dailyLog = { cal: 0, pro: 0, carb: 0, fat: 0, date: today };
-        localStorage.setItem('dailyLog', JSON.stringify(dailyLog));
-      }
-    }
-
-    function searchProduct() {
-      const input = document.getElementById('barcodeInput').value.toLowerCase();
-      let found = database[input];
-      if (!found) { for (let key in database) { if (database[key].name.toLowerCase().includes(input)) { found = database[key]; break; } } }
-      if (found) {
-        currentScanned = found;
-        document.getElementById('resName').innerText = found.name;
-        document.getElementById('resCal').innerText = found.cal; document.getElementById('resPro').innerText = found.pro + "g";
-        document.getElementById('resCarb').innerText = found.carb + "g"; document.getElementById('resFat').innerText = found.fat + "g";
-        const badge = document.getElementById('badgeProtein');
-        found.pro >= 10 ? badge.classList.remove('hidden') : badge.classList.add('hidden');
-        document.getElementById('resultCard').classList.remove('hidden');
-      } else { alert("Produk tidak ditemukan!"); }
-    }
-
-    function addToDaily() {
-      if (!currentScanned) return;
-      dailyLog.cal += currentScanned.cal; dailyLog.pro += currentScanned.pro;
-      dailyLog.carb += currentScanned.carb; dailyLog.fat += currentScanned.fat;
-      localStorage.setItem('dailyLog', JSON.stringify(dailyLog)); updateProgress();
-      document.getElementById('resultCard').classList.add('hidden'); document.getElementById('barcodeInput').value = '';
-      alert(`${currentScanned.name} dicatat!`);
-    }
-
-    function updateProgress() {
-      const activeCalTarget = isGymDay ? targets.cal + 300 : targets.cal;
-      const activeProTarget = isGymDay ? targets.pro + 20 : targets.pro;
-      const calPercent = Math.min((dailyLog.cal / activeCalTarget) * 100, 100);
-      const proPercent = Math.min((dailyLog.pro / activeProTarget) * 100, 100);
-      document.getElementById('calBar').style.width = calPercent + "%"; document.getElementById('proBar').style.width = proPercent + "%";
-      document.getElementById('calText').innerText = `${dailyLog.cal} / ${activeCalTarget} kcal`;
-      document.getElementById('proText').innerText = `${dailyLog.pro} / ${activeProTarget} g`;
-    }
-
-    function toggleCalc() { document.getElementById('calcBox').classList.toggle('hidden'); }
-    function calculateTDEE() {
-      const weight = document.getElementById('calcWeight').value; const height = document.getElementById('calcHeight').value;
-      if (weight && height) {
-        const bmr = (10 * weight) + (6.25 * height) - (5 * 16) + 5; const tdee = Math.round(bmr * 1.55); const proTarget = Math.round(weight * 1.8); 
-        targets = { cal: tdee, pro: proTarget }; localStorage.setItem('targets', JSON.stringify(targets)); 
-        updateProgress(); toggleCalc();
-        alert(`Target Dasar diperbarui!\nKalori: ${tdee}\nProtein: ${proTarget}g`);
-      }
-    }
-
-    function addToCompare() {
-      if (!currentScanned) return; if (compareList.length >= 2) return alert("Maksimal 2 produk!");
-      compareList.push(currentScanned); renderCompare(); document.getElementById('resultCard').classList.add('hidden'); alert('Ditambahkan ke Bandingkan!');
-    }
-    function renderCompare() {
-      const grid = document.getElementById('compareGrid'); const emptyMsg = document.getElementById('compareEmpty');
-      if (compareList.length === 0) { grid.classList.add('hidden'); emptyMsg.classList.remove('hidden'); return; }
-      grid.classList.remove('hidden'); emptyMsg.classList.add('hidden'); grid.innerHTML = '';
-      compareList.forEach(item => {
-        grid.innerHTML += `<div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-xl border border-primary text-center">
-            <p class="font-bold text-sm mb-2 h-10 overflow-hidden">${item.name}</p>
-            <p class="text-xs text-gray-500">Kalori: <span class="font-bold text-red-500">${item.cal}</span></p>
-            <p class="text-xs text-gray-500">Protein: <span class="font-bold text-primary">${item.pro}g</span></p>
-          </div>`;
-      });
-    }
-    function clearCompare() { compareList = []; renderCompare(); }
-
-    function exportWA() {
-      let cT = isGymDay ? targets.cal + 300 : targets.cal; let pT = isGymDay ? targets.pro + 20 : targets.pro;
-      let text = `*Catatan Nutrisi (NutriScan)*\n🔥 Streak: ${localStorage.getItem('streak')} Hari\n\n📊 Kalori: ${dailyLog.cal} / ${cT}\n💪 Protein: ${dailyLog.pro} / ${pT}g`;
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-    }
-
-    function renderChart() {
-      let history = JSON.parse(localStorage.getItem('history')) || [];
-      if (history.length === 0) history = [{ date: "H-3", cal: 1800, pro: 70 }, { date: "H-2", cal: 2100, pro: 85 }, { date: "H-1", cal: 1950, pro: 80 }];
-      const ctx = document.getElementById('weeklyChart').getContext('2d');
-      chartInstance = new Chart(ctx, {
-        type: 'bar', data: { labels: history.map(h => h.date), datasets: [
-            { label: 'Protein (g)', data: history.map(h => h.pro), backgroundColor: '#3b82f6', type: 'line', tension: 0.3 },
-            { label: 'Kalori', data: history.map(h => h.cal), backgroundColor: '#10b981', borderRadius: 4 }
-        ]}, options: { responsive: true, maintainAspectRatio: false }
-      });
-    }
-
-    checkLogin();
-  </script>
+                        let htmlContent = "";
+                        mediaList.forEach((item, index) => {
+                            let mediaUrl = typeof item === 'string' ? item : (item.url || item.download_url);
+                            if (mediaUrl) {
+                                let isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('video');
+                                let ext = isVideo ? 'mp4' : 'jpg';
+                                htmlContent += `
+                                    <div class="media-card">
+                                        <div class="badge">Instagram ${isVideo ? 'Video' : 'Foto'} ${index + 1}</div>
+                                        ${isVideo ? `<video controls src="${mediaUrl}"></video>` : `<img src="${mediaUrl}" alt="IG Media ${index + 1}">`}
+                                        <button class="btn-download" onclick="downloadFile('${mediaUrl}', 'instagram_media_${index + 1}.${ext}')">Download ${isVideo ? 'Video' : 'Foto'} Ini</button>
+                                    </div>
+                                `;
+                            }
+                        });
+                        resultDiv.innerHTML = htmlContent || "<p>Media tidak ditemukan dari link tersebut.</p>";
+                    } else {
+                        alert("Gagal memproses link Instagram. Pastikan akun tidak diprivate!");
+                    }
+                } 
+                else {
+                    alert("Link tidak dikenali! Masukkan link TikTok atau Instagram yang valid.");
+                }
+            } catch (error) {
+                console.error("Kesalahan:", error);
+                alert("Terjadi kendala jaringan atau masalah pada API.");
+            } finally {
+                btn.innerText = "Proses & Ambil Media";
+                btn.disabled = false;
+            }
+        }
+    </script>
 </body>
 </html>
