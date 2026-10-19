@@ -242,21 +242,13 @@
                     }
                 } 
                 else if (urlTarget.includes('instagram.com')) {
-                    const apiURL = `https://instagram-downloader51.p.rapidapi.com/dl?url=${encodeURIComponent(urlTarget)}`;
-                    const response = await fetch(apiURL, {
-                        method: 'GET',
-                        headers: {
-                            'X-RapidAPI-Key': '39c91500ffmsha22cee5043214eep1b00dcjsn9bd0f2a7a005',
-                            'X-RapidAPI-Host': 'instagram-downloader51.p.rapidapi.com'
-                        }
-                    });
+                    // Menggunakan endpoint alternatif publik yang lebih ramah untuk client-side fetch
+                    const apiURL = `https://deliriussapiens-instagram-downloader.hf.space/dl?url=${encodeURIComponent(urlTarget)}`;
+                    const response = await fetch(apiURL);
                     const result = await response.json();
 
-                    // Menyesuaikan struktur data response dari API instagram-downloader51
                     let mediaList = [];
-                    if (result && result.link) {
-                        mediaList = Array.isArray(result.link) ? result.link : [result.link];
-                    } else if (result && result.data) {
+                    if (result && result.data) {
                         mediaList = Array.isArray(result.data) ? result.data : [result.data];
                     } else if (result && result.url) {
                         mediaList = Array.isArray(result.url) ? result.url : [result.url];
@@ -267,7 +259,7 @@
                         mediaList.forEach((item, index) => {
                             let mediaUrl = typeof item === 'string' ? item : (item.url || item.download_url);
                             if (mediaUrl) {
-                                let isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('video');
+                                let isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('video') || item.type === 'video';
                                 let ext = isVideo ? 'mp4' : 'jpg';
                                 htmlContent += `
                                     <div class="media-card">
@@ -280,7 +272,7 @@
                         });
                         resultDiv.innerHTML = htmlContent || "<p>Media tidak ditemukan dari link tersebut.</p>";
                     } else {
-                        alert("Gagal memproses link Instagram. Pastikan akun tidak diprivate!");
+                        alert("Gagal memproses link Instagram. Pastikan link valid dan akun tidak diprivate!");
                     }
                 } 
                 else {
@@ -288,7 +280,7 @@
                 }
             } catch (error) {
                 console.error("Kesalahan:", error);
-                alert("Terjadi kendala jaringan atau masalah pada API.");
+                alert("Terjadi kendala jaringan atau masalah pada server downloader.");
             } finally {
                 btn.innerText = "Proses & Ambil Media";
                 btn.disabled = false;
