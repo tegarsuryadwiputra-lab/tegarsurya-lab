@@ -189,7 +189,7 @@
                 window.URL.revokeObjectURL(blobUrl);
                 document.body.removeChild(a);
             } catch (error) {
-                console.error("Gagal mendownload otomatis, membuka tautan cadangan...", error);
+                console.error("Gagal mendownload otomatis...", error);
                 window.open(fileUrl, '_blank');
             }
         }
@@ -238,41 +238,31 @@
                         }
                         resultDiv.innerHTML = htmlContent;
                     } else {
-                        alert("Gagal mengambil data TikTok. Pastikan link benar!");
+                        alert("Gagal mengambil data TikTok.");
                     }
                 } 
                 else if (urlTarget.includes('instagram.com')) {
-                    // Menggunakan endpoint alternatif publik yang lebih ramah untuk client-side fetch
-                    const apiURL = `https://deliriussapiens-instagram-downloader.hf.space/dl?url=${encodeURIComponent(urlTarget)}`;
+                    // Menggunakan endpoint alternatif api.siputzx.my.id untuk Instagram
+                    const apiURL = `https://api.siputzx.my.id/api/s/igdl?url=${encodeURIComponent(urlTarget)}`;
                     const response = await fetch(apiURL);
                     const result = await response.json();
 
-                    let mediaList = [];
-                    if (result && result.data) {
-                        mediaList = Array.isArray(result.data) ? result.data : [result.data];
-                    } else if (result && result.url) {
-                        mediaList = Array.isArray(result.url) ? result.url : [result.url];
-                    }
-
-                    if (mediaList.length > 0) {
+                    if (result && result.status && result.data && result.data.length > 0) {
                         let htmlContent = "";
-                        mediaList.forEach((item, index) => {
-                            let mediaUrl = typeof item === 'string' ? item : (item.url || item.download_url);
-                            if (mediaUrl) {
-                                let isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('video') || item.type === 'video';
-                                let ext = isVideo ? 'mp4' : 'jpg';
-                                htmlContent += `
-                                    <div class="media-card">
-                                        <div class="badge">Instagram ${isVideo ? 'Video' : 'Foto'} ${index + 1}</div>
-                                        ${isVideo ? `<video controls src="${mediaUrl}"></video>` : `<img src="${mediaUrl}" alt="IG Media ${index + 1}">`}
-                                        <button class="btn-download" onclick="downloadFile('${mediaUrl}', 'instagram_media_${index + 1}.${ext}')">Download ${isVideo ? 'Video' : 'Foto'} Ini</button>
-                                    </div>
-                                `;
-                            }
+                        result.data.forEach((mediaUrl, index) => {
+                            let isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('video');
+                            let ext = isVideo ? 'mp4' : 'jpg';
+                            htmlContent += `
+                                <div class="media-card">
+                                    <div class="badge">Instagram ${isVideo ? 'Video' : 'Foto'} ${index + 1}</div>
+                                    ${isVideo ? `<video controls src="${mediaUrl}"></video>` : `<img src="${mediaUrl}" alt="IG Media ${index + 1}">`}
+                                    <button class="btn-download" onclick="downloadFile('${mediaUrl}', 'instagram_media_${index + 1}.${ext}')">Download ${isVideo ? 'Video' : 'Foto'} Ini</button>
+                                </div>
+                            `;
                         });
-                        resultDiv.innerHTML = htmlContent || "<p>Media tidak ditemukan dari link tersebut.</p>";
+                        resultDiv.innerHTML = htmlContent;
                     } else {
-                        alert("Gagal memproses link Instagram. Pastikan link valid dan akun tidak diprivate!");
+                        alert("Gagal memproses link Instagram. Pastikan link publik dan tidak diprivate!");
                     }
                 } 
                 else {
