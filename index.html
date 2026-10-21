@@ -227,7 +227,10 @@
             background: #000;
         }
         .btn-download {
-            display: block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
             width: 100%;
             padding: 10px;
             background: #25F4EE;
@@ -410,8 +413,11 @@
             }
         }
 
-        // Diubah tanpa alert pop-up agar animasi putar terlihat mulus
-        async function downloadFile(fileUrl, filename) {
+        async function downloadFile(fileUrl, filename, buttonElement) {
+            const originalHTML = buttonElement.innerHTML;
+            buttonElement.disabled = true;
+            buttonElement.innerHTML = `<div class="spinner"></div> Tunggu sebentar...`;
+
             try {
                 const response = await fetch(fileUrl);
                 const blob = await response.blob();
@@ -428,6 +434,9 @@
                 document.body.removeChild(a);
             } catch (error) {
                 window.open(fileUrl, '_blank');
+            } finally {
+                buttonElement.disabled = false;
+                buttonElement.innerHTML = originalHTML;
             }
         }
 
@@ -494,7 +503,7 @@
             }
 
             btn.disabled = true;
-            btnText.innerHTML = `<div class="spinner"></div> Sedang Memproses...`;
+            btnText.innerHTML = `<div class="spinner"></div> Tunggu sebentar...`;
             resultDiv.innerHTML = "";
 
             try {
@@ -512,7 +521,7 @@
                                 <div class="media-card">
                                     <div class="badge">JPG - Foto Slide ${index + 1}</div>
                                     <img src="${imgUrl}" alt="Slide ${index + 1}">
-                                    <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${index + 1}.jpg')">Download Foto ${index + 1}</button>
+                                    <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${index + 1}.jpg', this)">Download Foto ${index + 1}</button>
                                     <button class="btn-download btn-copy" onclick="copyLink('${imgUrl}')">📋 Salin Link Foto</button>
                                 </div>
                             `;
@@ -525,9 +534,9 @@
                             <div class="media-card">
                                 <div class="badge">MP4 - Video HD Tanpa Watermark</div>
                                 <video controls src="${videoHD}"></video>
-                                <button class="btn-download btn-hd" onclick="downloadFile('${videoHD}', 'tiktok_video_HD.mp4')">🔥 Download Video HD (1080p)</button>
-                                ${videoHD !== videoNormal ? `<button class="btn-download" onclick="downloadFile('${videoNormal}', 'tiktok_video_SD.mp4')">Download Versi Standar</button>` : ''}
-                                ${result.data.music ? `<button class="btn-download btn-audio" onclick="downloadFile('${result.data.music}', 'tiktok_audio.mp3')">🎵 Download Musik MP3</button>` : ''}
+                                <button class="btn-download btn-hd" onclick="downloadFile('${videoHD}', 'tiktok_video_HD.mp4', this)">🔥 Download Video HD (1080p)</button>
+                                ${videoHD !== videoNormal ? `<button class="btn-download" onclick="downloadFile('${videoNormal}', 'tiktok_video_SD.mp4', this)">Download Versi Standar</button>` : ''}
+                                ${result.data.music ? `<button class="btn-download btn-audio" onclick="downloadFile('${result.data.music}', 'tiktok_audio.mp3', this)">🎵 Download Musik MP3</button>` : ''}
                                 <button class="btn-download btn-copy" onclick="copyLink('${videoHD}')">📋 Salin Tautan Video</button>
                             </div>
                         `;
