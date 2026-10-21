@@ -348,7 +348,6 @@
         <h2>TikTok Downloader</h2>
         <p class="subtitle">Unduh Video HD & Foto Slide TikTok tanpa watermark.</p>
         
-        <!-- Fitur unggulan agar web tidak sepi -->
         <div class="features-grid">
             <div class="feature-item"><span>⚡</span>Tanpa Watermark</div>
             <div class="feature-item"><span>🔥</span>Kualitas HD</div>
@@ -367,7 +366,6 @@
         
         <div id="resultDiv"></div>
 
-        <!-- Riwayat unduhan terakhir -->
         <div class="history-section" id="historySection" style="display: none;">
             <div class="history-title">
                 <span>🕒 Riwayat Terakhir</span>
@@ -412,9 +410,9 @@
             }
         }
 
+        // Diubah tanpa alert pop-up agar animasi putar terlihat mulus
         async function downloadFile(fileUrl, filename) {
             try {
-                alert("Mengunduh file, mohon tunggu sebentar...");
                 const response = await fetch(fileUrl);
                 const blob = await response.blob();
                 const blobUrl = window.URL.createObjectURL(blob);
