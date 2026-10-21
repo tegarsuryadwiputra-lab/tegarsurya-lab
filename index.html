@@ -3,389 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIO Media Downloader - TikTok, YouTube & Music</title>
+    <title>TikTok Downloader</title>
     <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --container-bg: rgba(30, 41, 59, 0.75);
+            --text-color: #ffffff;
+            --sub-text: #94a3b8;
+            --input-bg: #0f172a;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --card-bg: #0f172a;
+            --card-border: #334155;
+        }
+
+        .light-mode {
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --container-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #0f172a;
+            --sub-text: #64748b;
+            --input-bg: #f1f5f9;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --card-bg: #ffffff;
+            --card-border: #cbd5e1;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f172a;
-            color: #ffffff;
+            background: var(--bg-gradient);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
         }
+
         .container {
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            background: var(--container-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 480px;
+            max-width: 450px;
             text-align: center;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .brand-icon {
+            font-size: 36px;
+            margin-bottom: 5px;
         }
         h2 {
-            margin-bottom: 5px;
+            margin: 0 0 5px 0;
             color: #25F4EE;
+            font-size: 22px;
         }
         p.subtitle {
-            color: #94a3b8;
-            font-size: 13px;
+            color: var(--sub-text);
+            font-size: 12px;
             margin-bottom: 20px;
             line-height: 1.4;
         }
-        .section-box {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 25px;
-            text-align: left;
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 18px;
         }
-        .section-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #38bdf8;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .feature-item {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            padding: 8px 4px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: var(--text-color);
+            text-align: center;
         }
+        .feature-item span {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
         .input-group {
             position: relative;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
         input[type="text"] {
             width: 100%;
-            padding: 12px 35px 12px 12px;
-            border: 1px solid #475569;
-            border-radius: 8px;
-            background: #1e293b;
-            color: #fff;
+            padding: 14px 75px 14px 14px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            background: var(--input-bg);
+            color: var(--text-color);
             box-sizing: border-box;
             outline: none;
             font-size: 13px;
+            transition: border-color 0.2s;
         }
         input[type="text"]:focus {
             border-color: #25F4EE;
+            box-shadow: 0 0 8px rgba(37, 244, 238, 0.2);
         }
+
+        .paste-btn {
+            position: absolute;
+            right: 42px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #334155;
+            color: #fff;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .paste-btn:hover {
+            background: #475569;
+        }
+
         .clear-btn {
             position: absolute;
-            right: 10px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #94a3b8;
+            color: var(--sub-text);
             font-size: 14px;
             cursor: pointer;
             padding: 0;
         }
         .clear-btn:hover {
-            color: #fff;
+            color: var(--text-color);
         }
-        button.action-btn {
+        
+        button.main-btn {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
+            background: linear-gradient(135deg, #fe2c55 0%, #db2777 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
             font-size: 14px;
             cursor: pointer;
             transition: opacity 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
-        button.action-btn:hover {
+        button.main-btn:hover {
             opacity: 0.9;
         }
-        .btn-tiktok { background: #fe2c55; }
-        .btn-youtube { background: #ff0000; }
-        .btn-music { background: #a855f7; }
 
-        .result-area {
-            margin-top: 15px;
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #resultDiv {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            text-align: left;
         }
         .media-card {
-            background: #1e293b;
-            border: 1px solid #475569;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
             text-align: center;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .media-card img, .media-card video {
             width: 100%;
             max-height: 220px;
-            border-radius: 6px;
+            border-radius: 8px;
             object-fit: contain;
             margin-bottom: 8px;
             background: #000;
         }
         .btn-download {
-            display: block;
-            width: 100%;
-            padding: 9px;
-            background: #25F4EE;
-            color: #0f172a;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 13px;
-            box-sizing: border-box;
-            text-align: center;
-            margin-bottom: 6px;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-download:hover {
-            background: #1ddad5;
-        }
-        .btn-hd {
-            background: #ff0050;
-            color: #fff;
-        }
-        .badge {
-            display: inline-block;
-            background: #334155;
-            color: #25F4EE;
-            font-size: 11px;
-            padding: 3px 6px;
-            border-radius: 4px;
-            margin-bottom: 6px;
-        }
-        .footer {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #64748b;
-            border-top: 1px solid #334155;
-            padding-top: 12px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h2>AIO Downloader</h2>
-        <p class="subtitle">TikTok, YouTube & Music Downloader.<br><i>Tempel tautan sesuai kategorinya.</i></p>
-        
-        <!-- BAGIAN 1: TIKTOK -->
-        <div class="section-box">
-            <div class="section-title">🎵 TikTok Downloader</div>
-            <div class="input-group">
-                <input type="text" id="tiktokInput" placeholder="Tempel link TikTok di sini...">
-                <button class="clear-btn" onclick="clearField('tiktokInput')">✕</button>
-            </div>
-            <button class="action-btn btn-tiktok" id="btnTikTok" onclick="prosesTikTok()">Proses TikTok</button>
-            <div id="tiktokResult" class="result-area"></div>
-        </div>
-
-        <!-- BAGIAN 2: YOUTUBE -->
-        <div class="section-box">
-            <div class="section-title">▶️ YouTube Video Downloader (HD)</div>
-            <div class="input-group">
-                <input type="text" id="ytInput" placeholder="Tempel link YouTube (Video / Shorts)...">
-                <button class="clear-btn" onclick="clearField('ytInput')">✕</button>
-            </div>
-            <button class="action-btn btn-youtube" id="btnYouTube" onclick="prosesYouTube()">Proses YouTube</button>
-            <div id="ytResult" class="result-area"></div>
-        </div>
-
-        <!-- BAGIAN 3: YOUTUBE MUSIC -->
-        <div class="section-box">
-            <div class="section-title">🎧 YouTube Music / Audio Downloader</div>
-            <div class="input-group">
-                <input type="text" id="musicInput" placeholder="Tempel link YouTube Music...">
-                <button class="clear-btn" onclick="clearField('musicInput')">✕</button>
-            </div>
-            <button class="action-btn btn-music" id="btnMusic" onclick="prosesMusic()">Proses Musik (MP3)</button>
-            <div id="musicResult" class="result-area"></div>
-        </div>
-
-        <div class="footer">
-            Created with ⚡ for Fast & Clean Downloading
-        </div>
-    </div>
-
-    <script>
-        function clearField(id) {
-            document.getElementById(id).value = '';
-            document.getElementById(id).focus();
-        }
-
-        async function downloadFile(fileUrl, filename) {
-            try {
-                alert("Mengunduh file, mohon tunggu sebentar...");
-                const response = await fetch(fileUrl);
-                const blob = await response.blob();
-                const blobUrl = window.URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = blobUrl;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                
-                window.URL.revokeObjectURL(blobUrl);
-                document.body.removeChild(a);
-            } catch (error) {
-                console.error("Gagal mendownload otomatis, membuka tautan cadangan...", error);
-                window.open(fileUrl, '_blank');
-            }
-        }
-
-        // FUNGSI TIKTOK
-        async function prosesTikTok() {
-            const urlTarget = document.getElementById('tiktokInput').value.trim();
-            const btn = document.getElementById('btnTikTok');
-            const resultDiv = document.getElementById('tiktokResult');
-
-            if (!urlTarget) { alert("Masukkan link TikTok terlebih dahulu!"); return; }
-            if (!urlTarget.includes('tiktok.com')) { alert("Link bukan tautan TikTok yang valid!"); return; }
-
-            btn.innerText = "Memproses...";
-            btn.disabled = true;
-            resultDiv.innerHTML = "";
-
-            try {
-                const apiURL = `https://www.tikwm.com/api/?url=${encodeURIComponent(urlTarget)}&hd=1`;
-                const response = await fetch(apiURL);
-                const result = await response.json();
-
-                if (result.code === 0 && result.data) {
-                    let htmlContent = "";
-                    if (result.data.images && result.data.images.length > 0) {
-                        result.data.images.forEach((imgUrl, index) => {
-                            htmlContent += `
-                                <div class="media-card">
-                                    <div class="badge">Foto Slide ${index + 1}</div>
-                                    <img src="${imgUrl}" alt="Slide ${index + 1}">
-                                    <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${index + 1}.jpg')">Download Foto</button>
-                                </div>
-                            `;
-                        });
-                    } else if (result.data.play) {
-                        let videoHD = result.data.hdplay || result.data.play;
-                        let videoNormal = result.data.play;
-
-                        htmlContent += `
-                            <div class="media-card">
-                                <div class="badge">Video TikTok HD</div>
-                                <video controls src="${videoHD}"></video>
-                                <button class="btn-download btn-hd" onclick="downloadFile('${videoHD}', 'tiktok_HD.mp4')">🔥 Download Video HD (1080p)</button>
-                                ${videoHD !== videoNormal ? `<button class="btn-download" onclick="downloadFile('${videoNormal}', 'tiktok_SD.mp4')">Download Standar</button>` : ''}
-                                ${result.data.music ? `<button class="btn-download" style="background:#a855f7; color:#fff;" onclick="downloadFile('${result.data.music}', 'tiktok_audio.mp3')">Download Audio MP3</button>` : ''}
-                            </div>
-                        `;
-                    }
-                    resultDiv.innerHTML = htmlContent;
-                } else {
-                    alert("Gagal mengambil data TikTok.");
-                }
-            } catch (error) {
-                alert("Terjadi kendala jaringan pada TikTok.");
-            } finally {
-                btn.innerText = "Proses TikTok";
-                btn.disabled = false;
-            }
-        }
-
-        // FUNGSI YOUTUBE
-        async function prosesYouTube() {
-            const urlTarget = document.getElementById('ytInput').value.trim();
-            const btn = document.getElementById('btnYouTube');
-            const resultDiv = document.getElementById('ytResult');
-
-            if (!urlTarget) { alert("Masukkan link YouTube terlebih dahulu!"); return; }
-            if (!urlTarget.includes('youtube.com') && !urlTarget.includes('youtu.be')) { alert("Link bukan tautan YouTube yang valid!"); return; }
-
-            btn.innerText = "Memproses...";
-            btn.disabled = true;
-            resultDiv.innerHTML = "";
-
-            try {
-                const apiURL = `https://api.vkrproject.de/api/v1/ytdl?url=${encodeURIComponent(urlTarget)}`;
-                const response = await fetch(apiURL);
-                const result = await response.json();
-
-                if (result && (result.data || result.url || result.video)) {
-                    let data = result.data || result;
-                    let title = data.title || "youtube_video";
-                    let thumb = data.thumbnail || data.thumb || "";
-                    let dlUrl = data.url || data.dl || (data.video && data.video[0] ? data.video[0].url : "");
-
-                    if (dlUrl) {
-                        resultDiv.innerHTML = `
-                            <div class="media-card">
-                                <div class="badge">YouTube HD Video</div>
-                                ${thumb ? `<img src="${thumb}" alt="Thumbnail">` : ''}
-                                <p style="font-size:12px; margin: 6px 0; color:#cbd5e1;"><b>${title}</b></p>
-                                <button class="btn-download btn-hd" onclick="downloadFile('${dlUrl}', 'youtube_video_HD.mp4')">🔥 Download Video HD (1080p)</button>
-                            </div>
-                        `;
-                    } else {
-                        alert("Gagal menemukan link download video YouTube.");
-                    }
-                } else {
-                    alert("Gagal memproses YouTube. Pastikan link benar!");
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Terjadi kendala jaringan pada server YouTube.");
-            } finally {
-                btn.innerText = "Proses YouTube";
-                btn.disabled = false;
-            }
-        }
-
-        // FUNGSI YOUTUBE MUSIC
-        async function prosesMusic() {
-            const urlTarget = document.getElementById('musicInput').value.trim();
-            const btn = document.getElementById('btnMusic');
-            const resultDiv = document.getElementById('musicResult');
-
-            if (!urlTarget) { alert("Masukkan link YouTube Music terlebih dahulu!"); return; }
-            if (!urlTarget.includes('youtube.com') && !urlTarget.includes('youtu.be') && !urlTarget.includes('music.youtube.com')) { alert("Link tidak valid!"); return; }
-
-            btn.innerText = "Memproses Audio...";
-            btn.disabled = true;
-            resultDiv.innerHTML = "";
-
-            try {
-                const apiURL = `https://api.vkrproject.de/api/v1/ytdl?url=${encodeURIComponent(urlTarget)}`;
-                const response = await fetch(apiURL);
-                const responseJson = await response.json();
-
-                if (responseJson && (responseJson.data || responseJson.audio || responseJson.url)) {
-                    let data = responseJson.data || responseJson;
-                    let title = data.title || "youtube_audio";
-                    let thumb = data.thumbnail || data.thumb || "";
-                    let audioUrl = data.audio || data.dl_audio || data.url;
-
-                    if (audioUrl) {
-                        resultDiv.innerHTML = `
-                            <div class="media-card">
-                                <div class="badge">YouTube Music (MP3)</div>
-                                ${thumb ? `<img src="${thumb}" alt="Thumbnail" style="max-height:140px;">` : ''}
-                                <p style="font-size:12px; margin: 6px 0; color:#cbd5e1;"><b>${title}</b></p>
-                                <button class="btn-download" style="background:#a855f7; color:#fff;" onclick="downloadFile('${audioUrl}', '${title.replace(/[^a-zA-Z0-9]/g, '_')}.mp3')">🎵 Download Audio MP3 (High Quality)</button>
-                            </div>
-                        `;
-                    } else {
-                        alert("Gagal mengekstrak audio dari link tersebut.");
-                    }
-                } else {
-                    alert("Gagal memproses YouTube Music.");
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Terjadi kendala jaringan pada server musik.");
-            } finally {
-                btn.innerText = "Proses Musik (MP3)";
-                btn.disabled = false;
-            }
-        }
-    </script>
-</body>
-</html>
