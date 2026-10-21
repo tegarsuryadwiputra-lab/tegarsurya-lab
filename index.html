@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok & Instagram All-in-One Downloader</title>
+    <title>AIO Media Downloader - TikTok, YouTube & Music</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -22,7 +22,7 @@
             border-radius: 16px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.4);
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             text-align: center;
         }
         h2 {
@@ -35,115 +35,131 @@
             margin-bottom: 20px;
             line-height: 1.4;
         }
+        .section-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         .input-group {
             position: relative;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         input[type="text"] {
             width: 100%;
-            padding: 14px 40px 14px 14px;
+            padding: 12px 35px 12px 12px;
             border: 1px solid #475569;
             border-radius: 8px;
-            background: #0f172a;
+            background: #1e293b;
             color: #fff;
             box-sizing: border-box;
             outline: none;
-            font-size: 14px;
+            font-size: 13px;
         }
         input[type="text"]:focus {
             border-color: #25F4EE;
         }
         .clear-btn {
             position: absolute;
-            right: 12px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
             color: #94a3b8;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             padding: 0;
-            width: auto;
         }
         .clear-btn:hover {
             color: #fff;
         }
-        button.main-btn {
+        button.action-btn {
             width: 100%;
-            padding: 14px;
-            background: #fe2c55;
+            padding: 12px;
             color: white;
             border: none;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 14px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: opacity 0.2s;
         }
-        button.main-btn:hover {
-            background: #e0244c;
+        button.action-btn:hover {
+            opacity: 0.9;
         }
-        #resultDiv {
-            margin-top: 25px;
-            max-height: 450px;
-            overflow-y: auto;
-            text-align: left;
+        .btn-tiktok { background: #fe2c55; }
+        .btn-youtube { background: #ff0000; }
+        .btn-music { background: #a855f7; }
+
+        .result-area {
+            margin-top: 15px;
         }
         .media-card {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 20px;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
             text-align: center;
         }
         .media-card img, .media-card video {
             width: 100%;
-            max-height: 280px;
+            max-height: 220px;
             border-radius: 6px;
             object-fit: contain;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             background: #000;
         }
         .btn-download {
             display: block;
             width: 100%;
-            padding: 10px;
+            padding: 9px;
             background: #25F4EE;
             color: #0f172a;
             border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
+            font-size: 13px;
             box-sizing: border-box;
             text-align: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             border: none;
             cursor: pointer;
-            transition: background 0.2s;
         }
         .btn-download:hover {
             background: #1ddad5;
         }
-        .btn-audio {
-            background: #a855f7;
+        .btn-hd {
+            background: #ff0050;
             color: #fff;
         }
         .badge {
             display: inline-block;
             background: #334155;
             color: #25F4EE;
-            font-size: 12px;
-            padding: 4px 8px;
+            font-size: 11px;
+            padding: 3px 6px;
             border-radius: 4px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .footer {
-            margin-top: 30px;
+            margin-top: 20px;
             font-size: 12px;
             color: #64748b;
             border-top: 1px solid #334155;
-            padding-top: 15px;
+            padding-top: 12px;
         }
     </style>
 </head>
@@ -151,15 +167,40 @@
 
     <div class="container">
         <h2>AIO Downloader</h2>
-        <p class="subtitle">TikTok & Instagram Downloader.<br><i>Tempel tautan dari aplikasi resmi.</i></p>
+        <p class="subtitle">TikTok, YouTube & Music Downloader.<br><i>Tempel tautan sesuai kategorinya.</i></p>
         
-        <div class="input-group">
-            <input type="text" id="urlInput" placeholder="Tempel link TikTok / IG...">
-            <button class="clear-btn" onclick="clearInput()" title="Hapus teks">✕</button>
+        <!-- BAGIAN 1: TIKTOK -->
+        <div class="section-box">
+            <div class="section-title">🎵 TikTok Downloader</div>
+            <div class="input-group">
+                <input type="text" id="tiktokInput" placeholder="Tempel link TikTok di sini...">
+                <button class="clear-btn" onclick="clearField('tiktokInput')">✕</button>
+            </div>
+            <button class="action-btn btn-tiktok" id="btnTikTok" onclick="prosesTikTok()">Proses TikTok</button>
+            <div id="tiktokResult" class="result-area"></div>
         </div>
-        <button class="main-btn" id="btnProcess" onclick="prosesEkstrak()">Proses & Ambil Media</button>
-        
-        <div id="resultDiv"></div>
+
+        <!-- BAGIAN 2: YOUTUBE -->
+        <div class="section-box">
+            <div class="section-title">▶️ YouTube Video Downloader (HD)</div>
+            <div class="input-group">
+                <input type="text" id="ytInput" placeholder="Tempel link YouTube (Video / Shorts)...">
+                <button class="clear-btn" onclick="clearField('ytInput')">✕</button>
+            </div>
+            <button class="action-btn btn-youtube" id="btnYouTube" onclick="prosesYouTube()">Proses YouTube</button>
+            <div id="ytResult" class="result-area"></div>
+        </div>
+
+        <!-- BAGIAN 3: YOUTUBE MUSIC -->
+        <div class="section-box">
+            <div class="section-title">🎧 YouTube Music / Audio Downloader</div>
+            <div class="input-group">
+                <input type="text" id="musicInput" placeholder="Tempel link YouTube Music...">
+                <button class="clear-btn" onclick="clearField('musicInput')">✕</button>
+            </div>
+            <button class="action-btn btn-music" id="btnMusic" onclick="prosesMusic()">Proses Musik (MP3)</button>
+            <div id="musicResult" class="result-area"></div>
+        </div>
 
         <div class="footer">
             Created with ⚡ for Fast & Clean Downloading
@@ -167,9 +208,9 @@
     </div>
 
     <script>
-        function clearInput() {
-            document.getElementById('urlInput').value = '';
-            document.getElementById('urlInput').focus();
+        function clearField(id) {
+            document.getElementById(id).value = '';
+            document.getElementById(id).focus();
         }
 
         async function downloadFile(fileUrl, filename) {
@@ -189,100 +230,158 @@
                 window.URL.revokeObjectURL(blobUrl);
                 document.body.removeChild(a);
             } catch (error) {
-                console.error("Gagal mendownload otomatis...", error);
+                console.error("Gagal mendownload otomatis, membuka tautan cadangan...", error);
                 window.open(fileUrl, '_blank');
             }
         }
 
-        async function prosesEkstrak() {
-            const urlTarget = document.getElementById('urlInput').value.trim();
-            const btn = document.getElementById('btnProcess');
-            const resultDiv = document.getElementById('resultDiv');
+        // FUNGSI TIKTOK
+        async function prosesTikTok() {
+            const urlTarget = document.getElementById('tiktokInput').value.trim();
+            const btn = document.getElementById('btnTikTok');
+            const resultDiv = document.getElementById('tiktokResult');
 
-            if (!urlTarget) {
-                alert("Masukkan link terlebih dahulu!");
-                return;
-            }
+            if (!urlTarget) { alert("Masukkan link TikTok terlebih dahulu!"); return; }
+            if (!urlTarget.includes('tiktok.com')) { alert("Link bukan tautan TikTok yang valid!"); return; }
 
-            btn.innerText = "Memproses Media...";
+            btn.innerText = "Memproses...";
             btn.disabled = true;
             resultDiv.innerHTML = "";
 
             try {
-                if (urlTarget.includes('tiktok.com')) {
-                    const apiURL = `https://www.tikwm.com/api/?url=${encodeURIComponent(urlTarget)}`;
-                    const response = await fetch(apiURL);
-                    const result = await response.json();
+                const apiURL = `https://www.tikwm.com/api/?url=${encodeURIComponent(urlTarget)}&hd=1`;
+                const response = await fetch(apiURL);
+                const result = await response.json();
 
-                    if (result.code === 0 && result.data) {
-                        let htmlContent = "";
-                        if (result.data.images && result.data.images.length > 0) {
-                            result.data.images.forEach((imgUrl, index) => {
-                                htmlContent += `
-                                    <div class="media-card">
-                                        <div class="badge">TikTok Foto Slide ${index + 1}</div>
-                                        <img src="${imgUrl}" alt="Slide ${index + 1}">
-                                        <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${index + 1}.jpg')">Download Foto ${index + 1}</button>
-                                    </div>
-                                `;
-                            });
-                        } else if (result.data.play) {
+                if (result.code === 0 && result.data) {
+                    let htmlContent = "";
+                    if (result.data.images && result.data.images.length > 0) {
+                        result.data.images.forEach((imgUrl, index) => {
                             htmlContent += `
                                 <div class="media-card">
-                                    <div class="badge">Video TikTok</div>
-                                    <video controls src="${result.data.play}"></video>
-                                    <button class="btn-download" onclick="downloadFile('${result.data.play}', 'tiktok_video.mp4')">Download Video (HD)</button>
-                                    ${result.data.music ? `<button class="btn-download btn-audio" onclick="downloadFile('${result.data.music}', 'tiktok_audio.mp3')">Download Audio (MP3)</button>` : ''}
+                                    <div class="badge">Foto Slide ${index + 1}</div>
+                                    <img src="${imgUrl}" alt="Slide ${index + 1}">
+                                    <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${index + 1}.jpg')">Download Foto</button>
                                 </div>
                             `;
-                        }
-                        resultDiv.innerHTML = htmlContent;
-                    } else {
-                        alert("Gagal mengambil data TikTok.");
-                    }
-                } 
-                else if (urlTarget.includes('instagram.com')) {
-                    // Menggunakan endpoint alternatif api.ryzendev.com untuk Instagram
-                    const apiURL = `https://api.ryzendev.com/api/downloader/igdl?url=${encodeURIComponent(urlTarget)}`;
-                    const response = await fetch(apiURL);
-                    const result = await response.json();
-
-                    let mediaList = [];
-                    if (result && result.data) {
-                        mediaList = Array.isArray(result.data) ? result.data : [result.data];
-                    } else if (result && result.url) {
-                        mediaList = Array.isArray(result.url) ? result.url : [result.url];
-                    }
-
-                    if (mediaList.length > 0) {
-                        let htmlContent = "";
-                        mediaList.forEach((item, index) => {
-                            let mediaUrl = typeof item === 'string' ? item : (item.url || item.download_url);
-                            if (mediaUrl) {
-                                let isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('video');
-                                let ext = isVideo ? 'mp4' : 'jpg';
-                                htmlContent += `
-                                    <div class="media-card">
-                                        <div class="badge">Instagram ${isVideo ? 'Video' : 'Foto'} ${index + 1}</div>
-                                        ${isVideo ? `<video controls src="${mediaUrl}"></video>` : `<img src="${mediaUrl}" alt="IG Media ${index + 1}">`}
-                                        <button class="btn-download" onclick="downloadFile('${mediaUrl}', 'instagram_media_${index + 1}.${ext}')">Download ${isVideo ? 'Video' : 'Foto'} Ini</button>
-                                    </div>
-                                `;
-                            }
                         });
-                        resultDiv.innerHTML = htmlContent;
-                    } else {
-                        alert("Gagal memproses link Instagram. Pastikan link publik!");
+                    } else if (result.data.play) {
+                        let videoHD = result.data.hdplay || result.data.play;
+                        let videoNormal = result.data.play;
+
+                        htmlContent += `
+                            <div class="media-card">
+                                <div class="badge">Video TikTok HD</div>
+                                <video controls src="${videoHD}"></video>
+                                <button class="btn-download btn-hd" onclick="downloadFile('${videoHD}', 'tiktok_HD.mp4')">🔥 Download Video HD (1080p)</button>
+                                ${videoHD !== videoNormal ? `<button class="btn-download" onclick="downloadFile('${videoNormal}', 'tiktok_SD.mp4')">Download Standar</button>` : ''}
+                                ${result.data.music ? `<button class="btn-download" style="background:#a855f7; color:#fff;" onclick="downloadFile('${result.data.music}', 'tiktok_audio.mp3')">Download Audio MP3</button>` : ''}
+                            </div>
+                        `;
                     }
-                } 
-                else {
-                    alert("Link tidak dikenali! Masukkan link TikTok atau Instagram yang valid.");
+                    resultDiv.innerHTML = htmlContent;
+                } else {
+                    alert("Gagal mengambil data TikTok.");
                 }
             } catch (error) {
-                console.error("Kesalahan:", error);
-                alert("Terjadi kendala jaringan atau masalah pada server downloader.");
+                alert("Terjadi kendala jaringan pada TikTok.");
             } finally {
-                btn.innerText = "Proses & Ambil Media";
+                btn.innerText = "Proses TikTok";
+                btn.disabled = false;
+            }
+        }
+
+        // FUNGSI YOUTUBE
+        async function prosesYouTube() {
+            const urlTarget = document.getElementById('ytInput').value.trim();
+            const btn = document.getElementById('btnYouTube');
+            const resultDiv = document.getElementById('ytResult');
+
+            if (!urlTarget) { alert("Masukkan link YouTube terlebih dahulu!"); return; }
+            if (!urlTarget.includes('youtube.com') && !urlTarget.includes('youtu.be')) { alert("Link bukan tautan YouTube yang valid!"); return; }
+
+            btn.innerText = "Memproses...";
+            btn.disabled = true;
+            resultDiv.innerHTML = "";
+
+            try {
+                const apiURL = `https://api.siputzx.my.id/api/s/youtube?url=${encodeURIComponent(urlTarget)}`;
+                const response = await fetch(apiURL);
+                const result = await response.json();
+
+                if (result && result.status && result.data) {
+                    let data = result.data;
+                    let title = data.title || "youtube_video";
+                    let thumb = data.thumbnail || "";
+                    let dlUrl = data.url || data.dl || (data.video && data.video[0] ? data.video[0].url : "");
+
+                    if (dlUrl) {
+                        resultDiv.innerHTML = `
+                            <div class="media-card">
+                                <div class="badge">YouTube HD Video</div>
+                                ${thumb ? `<img src="${thumb}" alt="Thumbnail">` : ''}
+                                <p style="font-size:12px; margin: 6px 0; color:#cbd5e1;"><b>${title}</b></p>
+                                <button class="btn-download btn-hd" onclick="downloadFile('${dlUrl}', 'youtube_video_HD.mp4')">🔥 Download Video HD (1080p/720p)</button>
+                            </div>
+                        `;
+                    } else {
+                        alert("Gagal menemukan link download video YouTube.");
+                    }
+                } else {
+                    alert("Gagal memproses YouTube. Pastikan link benar!");
+                }
+            } catch (error) {
+                alert("Terjadi kendala jaringan pada server YouTube.");
+            } finally {
+                btn.innerText = "Proses YouTube";
+                btn.disabled = false;
+            }
+        }
+
+        // FUNGSI YOUTUBE MUSIC
+        async function prosesMusic() {
+            const urlTarget = document.getElementById('musicInput').value.trim();
+            const btn = document.getElementById('btnMusic');
+            const resultDiv = document.getElementById('musicResult');
+
+            if (!urlTarget) { alert("Masukkan link YouTube Music terlebih dahulu!"); return; }
+            if (!urlTarget.includes('youtube.com') && !urlTarget.includes('youtu.be') && !urlTarget.includes('music.youtube.com')) { alert("Link tidak valid!"); return; }
+
+            btn.innerText = "Memproses Audio...";
+            btn.disabled = true;
+            resultDiv.innerHTML = "";
+
+            try {
+                // Menggunakan endpoint audio/mp3 converter publik
+                const apiURL = `https://api.siputzx.my.id/api/s/youtube?url=${encodeURIComponent(urlTarget)}`;
+                const response = await fetch(apiURL);
+                const result = await response.json();
+
+                if (result && result.status && result.data) {
+                    let data = result.data;
+                    let title = data.title || "youtube_audio";
+                    let thumb = data.thumbnail || "";
+                    let audioUrl = data.audio || data.dl_audio || data.url;
+
+                    if (audioUrl) {
+                        resultDiv.innerHTML = `
+                            <div class="media-card">
+                                <div class="badge">YouTube Music (MP3)</div>
+                                ${thumb ? `<img src="${thumb}" alt="Thumbnail" style="max-height:140px;">` : ''}
+                                <p style="font-size:12px; margin: 6px 0; color:#cbd5e1;"><b>${title}</b></p>
+                                <button class="btn-download" style="background:#a855f7; color:#fff;" onclick="downloadFile('${audioUrl}', '${title.replace(/[^a-zA-Z0-9]/g, '_')}.mp3')">🎵 Download Audio MP3 (High Quality)</button>
+                            </div>
+                        `;
+                    } else {
+                        alert("Gagal mengekstrak audio dari link tersebut.");
+                    }
+                } else {
+                    alert("Gagal memproses YouTube Music.");
+                }
+            } catch (error) {
+                alert("Terjadi kendala jaringan pada server musik.");
+            } finally {
+                btn.innerText = "Proses Musik (MP3)";
                 btn.disabled = false;
             }
         }
