@@ -208,6 +208,8 @@
     </div>
 
     <script>
+        const RAPID_API_KEY = "39c91500ffmsha22cee5043214eep1b00dcjsn9bd0f2a7a005";
+
         function clearField(id) {
             document.getElementById(id).value = '';
             document.getElementById(id).focus();
@@ -291,7 +293,7 @@
             }
         }
 
-        // FUNGSI YOUTUBE
+        // FUNGSI YOUTUBE (Menggunakan RapidAPI YT Downloader)
         async function prosesYouTube() {
             const urlTarget = document.getElementById('ytInput').value.trim();
             const btn = document.getElementById('btnYouTube');
@@ -305,15 +307,21 @@
             resultDiv.innerHTML = "";
 
             try {
-                const apiURL = `https://api.siputzx.my.id/api/s/youtube?url=${encodeURIComponent(urlTarget)}`;
-                const response = await fetch(apiURL);
+                // Menggunakan endpoint RapidAPI yt-downloader pihak ketiga yang handal
+                const apiURL = `https://yt-downloaderagg.p.rapidapi.com/v2/video/details?url=${encodeURIComponent(urlTarget)}`;
+                const response = await fetch(apiURL, {
+                    method: "GET",
+                    headers: {
+                        "x-rapidapi-key": RAPID_API_KEY,
+                        "x-rapidapi-host": "yt-downloaderagg.p.rapidapi.com"
+                    }
+                });
                 const result = await response.json();
 
-                if (result && result.status && result.data) {
-                    let data = result.data;
-                    let title = data.title || "youtube_video";
-                    let thumb = data.thumbnail || "";
-                    let dlUrl = data.url || data.dl || (data.video && data.video[0] ? data.video[0].url : "");
+                if (result && (result.link || result.downloads || result.url)) {
+                    let dlUrl = result.link || result.url || (result.downloads && result.downloads[0] ? result.downloads[0].url : "");
+                    let title = result.title || "youtube_video";
+                    let thumb = result.thumbnail || "";
 
                     if (dlUrl) {
                         resultDiv.innerHTML = `
@@ -321,24 +329,25 @@
                                 <div class="badge">YouTube HD Video</div>
                                 ${thumb ? `<img src="${thumb}" alt="Thumbnail">` : ''}
                                 <p style="font-size:12px; margin: 6px 0; color:#cbd5e1;"><b>${title}</b></p>
-                                <button class="btn-download btn-hd" onclick="downloadFile('${dlUrl}', 'youtube_video_HD.mp4')">🔥 Download Video HD (1080p/720p)</button>
+                                <button class="btn-download btn-hd" onclick="downloadFile('${dlUrl}', 'youtube_video_HD.mp4')">🔥 Download Video HD (1080p)</button>
                             </div>
                         `;
                     } else {
-                        alert("Gagal menemukan link download video YouTube.");
+                        alert("Gagal menemukan link download video.");
                     }
                 } else {
-                    alert("Gagal memproses YouTube. Pastikan link benar!");
+                    alert("Gagal memproses YouTube. Periksa kembali tautan Anda.");
                 }
             } catch (error) {
-                alert("Terjadi kendala jaringan pada server YouTube.");
+                console.error(error);
+                alert("Terjadi kendala saat menghubungkan ke server YouTube.");
             } finally {
                 btn.innerText = "Proses YouTube";
                 btn.disabled = false;
             }
         }
 
-        // FUNGSI YOUTUBE MUSIC
+        // FUNGSI YOUTUBE MUSIC (Menggunakan RapidAPI)
         async function prosesMusic() {
             const urlTarget = document.getElementById('musicInput').value.trim();
             const btn = document.getElementById('btnMusic');
@@ -352,34 +361,35 @@
             resultDiv.innerHTML = "";
 
             try {
-                // Menggunakan endpoint audio/mp3 converter publik
-                const apiURL = `https://api.siputzx.my.id/api/s/youtube?url=${encodeURIComponent(urlTarget)}`;
-                const response = await fetch(apiURL);
+                const apiURL = `https://yt-downloaderagg.p.rapidapi.com/v2/video/details?url=${encodeURIComponent(urlTarget)}`;
+                const response = await fetch(apiURL, {
+                    method: "GET",
+                    headers: {
+                        "x-rapidapi-key": RAPID_API_KEY,
+                        "x-rapidapi-host": "yt-downloaderagg.p.rapidapi.com"
+                    }
+                });
                 const result = await response.json();
 
-                if (result && result.status && result.data) {
-                    let data = result.data;
-                    let title = data.title || "youtube_audio";
-                    let thumb = data.thumbnail || "";
-                    let audioUrl = data.audio || data.dl_audio || data.url;
+                if (result && (result.audio || result.link)) {
+                    let audioUrl = result.audio || result.link;
+                    let title = result.title || "youtube_audio";
+                    let thumb = result.thumbnail || "";
 
-                    if (audioUrl) {
-                        resultDiv.innerHTML = `
-                            <div class="media-card">
-                                <div class="badge">YouTube Music (MP3)</div>
-                                ${thumb ? `<img src="${thumb}" alt="Thumbnail" style="max-height:140px;">` : ''}
-                                <p style="font-size:12px; margin: 6px 0; color:#cbd5e1;"><b>${title}</b></p>
-                                <button class="btn-download" style="background:#a855f7; color:#fff;" onclick="downloadFile('${audioUrl}', '${title.replace(/[^a-zA-Z0-9]/g, '_')}.mp3')">🎵 Download Audio MP3 (High Quality)</button>
-                            </div>
-                        `;
-                    } else {
-                        alert("Gagal mengekstrak audio dari link tersebut.");
-                    }
+                    resultDiv.innerHTML = `
+                        <div class="media-card">
+                            <div class="badge">YouTube Music (MP3)</div>
+                            ${thumb ? `<img src="${thumb}" alt="Thumbnail" style="max-height:140px;">` : ''}
+                            <p style="font-size:12px; margin: 6px 0; color:#cbd5e1;"><b>${title}</b></p>
+                            <button class="btn-download" style="background:#a855f7; color:#fff;" onclick="downloadFile('${audioUrl}', '${title.replace(/[^a-zA-Z0-9]/g, '_')}.mp3')">🎵 Download Audio MP3 (High Quality)</button>
+                        </div>
+                    `;
                 } else {
-                    alert("Gagal memproses YouTube Music.");
+                    alert("Gagal mengekstrak audio dari link tersebut.");
                 }
             } catch (error) {
-                alert("Terjadi kendala jaringan pada server musik.");
+                console.error(error);
+                alert("Terjadi kendala saat menghubungkan ke server musik.");
             } finally {
                 btn.innerText = "Proses Musik (MP3)";
                 btn.disabled = false;
