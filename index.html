@@ -227,3 +227,325 @@
             background: #000;
         }
         .btn-download {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #25F4EE;
+            color: #0f172a;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 12px;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-download:hover {
+            background: #1ddad5;
+        }
+        .btn-hd {
+            background: linear-gradient(135deg, #fe2c55 0%, #ff0050 100%);
+            color: #fff;
+        }
+        .btn-audio {
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: #fff;
+        }
+        .btn-copy {
+            background: #334155;
+            color: #fff;
+        }
+        .btn-copy:hover {
+            background: #475569;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--input-bg);
+            color: #25F4EE;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid var(--card-border);
+        }
+
+        .history-section {
+            margin-top: 25px;
+            text-align: left;
+            border-top: 1px solid var(--card-border);
+            padding-top: 15px;
+        }
+        .history-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--sub-text);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .clear-history {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .history-list {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 11px;
+        }
+        .history-item {
+            background: var(--input-bg);
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--sub-text);
+            border: 1px solid var(--card-border);
+        }
+        .history-item a {
+            color: #25F4EE;
+            text-decoration: none;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 11px;
+            color: var(--sub-text);
+            border-top: 1px solid var(--card-border);
+            padding-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .clear-result-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 11px;
+            cursor: pointer;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
+
+        <div class="brand-icon">🎵</div>
+        <h2>TikTok Downloader</h2>
+        <p class="subtitle">Unduh Video HD & Foto Slide TikTok tanpa watermark.</p>
+        
+        <!-- Fitur unggulan agar web tidak sepi -->
+        <div class="features-grid">
+            <div class="feature-item"><span>⚡</span>Tanpa Watermark</div>
+            <div class="feature-item"><span>🔥</span>Kualitas HD</div>
+            <div class="feature-item"><span>🎵</span>Support Audio</div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="Tempel tautan TikTok...">
+            <button class="paste-btn" onclick="pasteClipboard()" title="Tempel Tautan">Paste</button>
+            <button class="clear-btn" onclick="clearInput()" title="Hapus">✕</button>
+        </div>
+        
+        <button class="main-btn" id="btnProcess" onclick="prosesEkstrak()">
+            <span id="btnText">Proses & Ambil Media</span>
+        </button>
+        
+        <div id="resultDiv"></div>
+
+        <!-- Riwayat unduhan terakhir -->
+        <div class="history-section" id="historySection" style="display: none;">
+            <div class="history-title">
+                <span>🕒 Riwayat Terakhir</span>
+                <button class="clear-history" onclick="clearHistory()">Hapus Riwayat</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+
+        <div class="footer">
+            <span>Created with ⚡ for Fast Downloading</span>
+            <button class="clear-result-btn" id="clearResultBtn" onclick="clearResults()">Bersihkan Layar</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            document.getElementById('themeBtn').innerText = isLight ? '☀️' : '🌙';
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('themeBtn').innerText = '☀️';
+            }
+            loadHistory();
+        });
+
+        function clearInput() {
+            document.getElementById('urlInput').value = '';
+            document.getElementById('urlInput').focus();
+        }
+
+        async function pasteClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('urlInput').value = text;
+            } catch (err) {
+                alert("Gagal membaca clipboard. Tempel manual.");
+            }
+        }
+
+        async function downloadFile(fileUrl, filename) {
+            try {
+                alert("Mengunduh file, mohon tunggu sebentar...");
+                const response = await fetch(fileUrl);
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                
+                window.URL.revokeObjectURL(blobUrl);
+                document.body.removeChild(a);
+            } catch (error) {
+                window.open(fileUrl, '_blank');
+            }
+        }
+
+        function copyLink(fileUrl) {
+            navigator.clipboard.writeText(fileUrl).then(() => {
+                alert("Tautan unduhan berhasil disalin ke clipboard!");
+            }).catch(() => {
+                alert("Gagal menyalin tautan.");
+            });
+        }
+
+        function clearResults() {
+            document.getElementById('resultDiv').innerHTML = '';
+            document.getElementById('clearResultBtn').style.display = 'none';
+        }
+
+        function saveHistory(url) {
+            let history = JSON.parse(localStorage.getItem('dl_history') || '[]');
+            if (!history.includes(url)) {
+                history.unshift(url);
+                if (history.length > 5) history.pop();
+                localStorage.setItem('dl_history', JSON.stringify(history));
+            }
+            loadHistory();
+        }
+
+        function loadHistory() {
+            let history = JSON.parse(localStorage.getItem('dl_history') || '[]');
+            const historySection = document.getElementById('historySection');
+            const historyList = document.getElementById('historyList');
+
+            if (history.length > 0) {
+                historySection.style.display = 'block';
+                historyList.innerHTML = history.map(link => `
+                    <div class="history-item">
+                        <a href="#" onclick="document.getElementById('urlInput').value='${link}'; return false;" title="${link}">${link}</a>
+                        <span>Tersimpan</span>
+                    </div>
+                `).join('');
+            } else {
+                historySection.style.display = 'none';
+            }
+        }
+
+        function clearHistory() {
+            localStorage.removeItem('dl_history');
+            loadHistory();
+        }
+
+        async function prosesEkstrak() {
+            const urlTarget = document.getElementById('urlInput').value.trim();
+            const btn = document.getElementById('btnProcess');
+            const btnText = document.getElementById('btnText');
+            const resultDiv = document.getElementById('resultDiv');
+            const clearResBtn = document.getElementById('clearResultBtn');
+
+            if (!urlTarget) {
+                alert("Masukkan tautan TikTok terlebih dahulu!");
+                return;
+            }
+            if (!urlTarget.includes('tiktok.com')) {
+                alert("Tautan tidak valid! Pastikan memasukkan link TikTok yang benar.");
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.innerHTML = `<div class="spinner"></div> Sedang Memproses...`;
+            resultDiv.innerHTML = "";
+
+            try {
+                const apiURL = `https://www.tikwm.com/api/?url=${encodeURIComponent(urlTarget)}&hd=1`;
+                const response = await fetch(apiURL);
+                const result = await response.json();
+
+                if (result.code === 0 && result.data) {
+                    saveHistory(urlTarget);
+                    let htmlContent = "";
+                    
+                    if (result.data.images && result.data.images.length > 0) {
+                        result.data.images.forEach((imgUrl, index) => {
+                            htmlContent += `
+                                <div class="media-card">
+                                    <div class="badge">JPG - Foto Slide ${index + 1}</div>
+                                    <img src="${imgUrl}" alt="Slide ${index + 1}">
+                                    <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${index + 1}.jpg')">Download Foto ${index + 1}</button>
+                                    <button class="btn-download btn-copy" onclick="copyLink('${imgUrl}')">📋 Salin Link Foto</button>
+                                </div>
+                            `;
+                        });
+                    } else if (result.data.play) {
+                        let videoHD = result.data.hdplay || result.data.play;
+                        let videoNormal = result.data.play;
+
+                        htmlContent += `
+                            <div class="media-card">
+                                <div class="badge">MP4 - Video HD Tanpa Watermark</div>
+                                <video controls src="${videoHD}"></video>
+                                <button class="btn-download btn-hd" onclick="downloadFile('${videoHD}', 'tiktok_video_HD.mp4')">🔥 Download Video HD (1080p)</button>
+                                ${videoHD !== videoNormal ? `<button class="btn-download" onclick="downloadFile('${videoNormal}', 'tiktok_video_SD.mp4')">Download Versi Standar</button>` : ''}
+                                ${result.data.music ? `<button class="btn-download btn-audio" onclick="downloadFile('${result.data.music}', 'tiktok_audio.mp3')">🎵 Download Musik MP3</button>` : ''}
+                                <button class="btn-download btn-copy" onclick="copyLink('${videoHD}')">📋 Salin Tautan Video</button>
+                            </div>
+                        `;
+                    }
+                    resultDiv.innerHTML = htmlContent;
+                    clearResBtn.style.display = 'inline-block';
+                } else {
+                    alert("Gagal mengambil data TikTok. Pastikan link publik dan benar!");
+                }
+            } catch (error) {
+                alert("Terjadi kendala jaringan. Periksa koneksi internet Anda.");
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = "Proses & Ambil Media";
+            }
+        }
+    </script>
+</body>
+</html>
