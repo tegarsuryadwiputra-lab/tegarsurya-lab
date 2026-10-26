@@ -7,7 +7,7 @@
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            --container-bg: rgba(30, 41, 59, 0.75);
+            --container-bg: rgba(30, 41, 59, 0.85);
             --text-color: #ffffff;
             --sub-text: #94a3b8;
             --input-bg: #0f172a;
@@ -18,7 +18,7 @@
 
         .light-mode {
             --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            --container-bg: rgba(255, 255, 255, 0.85);
+            --container-bg: rgba(255, 255, 255, 0.9);
             --text-color: #0f172a;
             --sub-text: #64748b;
             --input-bg: #f1f5f9;
@@ -30,6 +30,9 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-gradient);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: var(--text-color);
             margin: 0;
             padding: 20px;
@@ -42,7 +45,7 @@
 
         .container {
             background: var(--container-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
             border: 1px solid var(--border-color);
             padding: 25px;
             border-radius: 20px;
@@ -53,10 +56,15 @@
             position: relative;
         }
 
-        .theme-toggle {
+        .top-controls {
             position: absolute;
             top: 20px;
             right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
             color: var(--text-color);
@@ -70,7 +78,7 @@
             font-size: 16px;
             transition: transform 0.2s;
         }
-        .theme-toggle:hover {
+        .icon-btn:hover {
             transform: scale(1.1);
         }
 
@@ -275,8 +283,101 @@
             border: 1px solid var(--card-border);
         }
 
+        .qr-box {
+            margin-top: 8px;
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .qr-box img {
+            width: 100px;
+            height: 100px;
+            display: block;
+        }
+
+        /* Modal Background Picker */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+        }
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .theme-option {
+            height: 60px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid var(--card-border);
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 11px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .theme-option:hover {
+            border-color: #25F4EE;
+        }
+
+        /* Quick Notes */
+        .notes-section {
+            margin-top: 20px;
+            text-align: left;
+            border-top: 1px solid var(--card-border);
+            padding-top: 15px;
+        }
+        .notes-section textarea {
+            width: 100%;
+            height: 60px;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-color);
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 11px;
+            box-sizing: border-box;
+            resize: none;
+            outline: none;
+        }
+
+        /* Network Status Banner */
+        #netBanner {
+            display: none;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            padding: 5px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
         .history-section {
-            margin-top: 25px;
+            margin-top: 20px;
             text-align: left;
             border-top: 1px solid var(--card-border);
             padding-top: 15px;
@@ -298,7 +399,7 @@
             cursor: pointer;
         }
         .history-list {
-            max-height: 120px;
+            max-height: 100px;
             overflow-y: auto;
             font-size: 11px;
         }
@@ -345,7 +446,12 @@
 <body>
 
     <div class="container">
-        <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
+        <div class="top-controls">
+            <button class="icon-btn" onclick="openThemeModal()" title="Pilih Background">🎨</button>
+            <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
+        </div>
+
+        <div id="netBanner">⚠️ Koneksi Internet Terputus (Offline)</div>
 
         <div class="brand-icon">🎵</div>
         <h2>TikTok Downloader</h2>
@@ -377,13 +483,37 @@
             <div class="history-list" id="historyList"></div>
         </div>
 
+        <div class="notes-section">
+            <div class="history-title"><span>📝 Catatan Kilat</span></div>
+            <textarea id="quickNotes" placeholder="Tulis catatan atau link cadangan di sini..." oninput="saveNotes()"></textarea>
+        </div>
+
         <div class="footer">
             <span>Created with ⚡ for Fast Downloading</span>
             <button class="clear-result-btn" id="clearResultBtn" onclick="clearResults()">Bersihkan Layar</button>
         </div>
     </div>
 
+    <!-- Modal Wallpaper / Background Picker -->
+    <div class="modal" id="themeModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0; color:#25F4EE; font-size:16px;">Pilih Background Web</h3>
+            <div class="theme-grid">
+                <div class="theme-option" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);" onclick="setBg('gradient-default')">Default</div>
+                <div class="theme-option" style="background: linear-gradient(135deg, #18181b 0%, #71717a 100%);" onclick="setBg('gradient-dark')">Abu Elegan</div>
+                <div class="theme-option" style="background: linear-gradient(135deg, #3b0764 0%, #831843 100%);" onclick="setBg('gradient-neon')">Neon Ungu</div>
+                <div class="theme-option" style="background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);" onclick="setBg('gradient-forest')">Hijau Hutan</div>
+            </div>
+            <label class="btn-download" style="background:#334155; color:#fff; cursor:pointer; margin-top:10px;">
+                🖼️ Upload Gambar Sendiri
+                <input type="file" id="customBgInput" accept="image/*" style="display:none;" onchange="uploadCustomBg(event)">
+            </label>
+            <button class="btn-download" style="background:#ef4444; color:#fff; margin-top:6px;" onclick="closeThemeModal()">Tutup</button>
+        </div>
+    </div>
+
     <script>
+        // Tema Terang / Gelap
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
@@ -391,11 +521,85 @@
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
+        // Background Picker
+        function openThemeModal() {
+            document.getElementById('themeModal').style.display = 'flex';
+        }
+        function closeThemeModal() {
+            document.getElementById('themeModal').style.display = 'none';
+        }
+        function setBg(type) {
+            let bgStyle = '';
+            if (type === 'gradient-default') bgStyle = 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)';
+            else if (type === 'gradient-dark') bgStyle = 'linear-gradient(135deg, #18181b 0%, #71717a 100%)';
+            else if (type === 'gradient-neon') bgStyle = 'linear-gradient(135deg, #3b0764 0%, #831843 100%)';
+            else if (type === 'gradient-forest') bgStyle = 'linear-gradient(135deg, #064e3b 0%, #022c22 100%)';
+
+            document.body.style.backgroundImage = 'none';
+            document.body.style.background = bgStyle;
+            localStorage.setItem('custom_bg', bgStyle);
+            localStorage.setItem('is_image_bg', 'false');
+            closeThemeModal();
+        }
+        function uploadCustomBg(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgUrl = e.target.result;
+                    document.body.style.background = `url('${imgUrl}') no-repeat center center fixed`;
+                    document.body.style.backgroundSize = 'cover';
+                    localStorage.setItem('custom_bg', imgUrl);
+                    localStorage.setItem('is_image_bg', 'true');
+                    closeThemeModal();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Quick Notes
+        function saveNotes() {
+            const text = document.getElementById('quickNotes').value;
+            localStorage.setItem('quick_notes', text);
+        }
+
+        // Network Status Check
+        function updateNetworkStatus() {
+            const banner = document.getElementById('netBanner');
+            if (!navigator.onLine) {
+                banner.style.display = 'block';
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
                 document.getElementById('themeBtn').innerText = '☀️';
             }
+            
+            // Load saved background
+            const savedBg = localStorage.getItem('custom_bg');
+            const isImg = localStorage.getItem('is_image_bg');
+            if (savedBg) {
+                if (isImg === 'true') {
+                    document.body.style.background = `url('${savedBg}') no-repeat center center fixed`;
+                    document.body.style.backgroundSize = 'cover';
+                } else {
+                    document.body.style.background = savedBg;
+                }
+            }
+
+            // Load saved notes
+            const savedNotes = localStorage.getItem('quick_notes');
+            if (savedNotes) {
+                document.getElementById('quickNotes').value = savedNotes;
+            }
+
+            updateNetworkStatus();
             loadHistory();
         });
 
@@ -423,6 +627,8 @@
                 const blob = await response.blob();
                 const blobUrl = window.URL.createObjectURL(blob);
                 
+                await new Promise(resolve => setTimeout(resolve, 800));
+
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = blobUrl;
@@ -517,18 +723,23 @@
                     
                     if (result.data.images && result.data.images.length > 0) {
                         result.data.images.forEach((imgUrl, index) => {
+                            const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(imgUrl)}`;
                             htmlContent += `
                                 <div class="media-card">
                                     <div class="badge">JPG - Foto Slide ${index + 1}</div>
                                     <img src="${imgUrl}" alt="Slide ${index + 1}">
                                     <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${index + 1}.jpg', this)">Download Foto ${index + 1}</button>
                                     <button class="btn-download btn-copy" onclick="copyLink('${imgUrl}')">📋 Salin Link Foto</button>
+                                    <div style="margin-top:8px;"><small style="color:var(--sub-text);">Scan QR untuk Unduh:</small><br>
+                                        <div class="qr-box"><img src="${qrApi}" alt="QR Code"></div>
+                                    </div>
                                 </div>
                             `;
                         });
                     } else if (result.data.play) {
                         let videoHD = result.data.hdplay || result.data.play;
                         let videoNormal = result.data.play;
+                        const qrApiVideo = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(videoHD)}`;
 
                         htmlContent += `
                             <div class="media-card">
@@ -538,6 +749,9 @@
                                 ${videoHD !== videoNormal ? `<button class="btn-download" onclick="downloadFile('${videoNormal}', 'tiktok_video_SD.mp4', this)">Download Versi Standar</button>` : ''}
                                 ${result.data.music ? `<button class="btn-download btn-audio" onclick="downloadFile('${result.data.music}', 'tiktok_audio.mp3', this)">🎵 Download Musik MP3</button>` : ''}
                                 <button class="btn-download btn-copy" onclick="copyLink('${videoHD}')">📋 Salin Tautan Video</button>
+                                <div style="margin-top:8px;"><small style="color:var(--sub-text);">Scan QR untuk Unduh:</small><br>
+                                    <div class="qr-box"><img src="${qrApiVideo}" alt="QR Code"></div>
+                                </div>
                             </div>
                         `;
                     }
