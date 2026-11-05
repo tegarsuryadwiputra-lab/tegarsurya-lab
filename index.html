@@ -123,9 +123,9 @@
             position: relative;
             margin-bottom: 15px;
         }
-        input[type="text"] {
+        input[type="text"], textarea.batch-input {
             width: 100%;
-            padding: 14px 75px 14px 14px;
+            padding: 12px;
             border: 1px solid var(--card-border);
             border-radius: 10px;
             background: var(--input-bg);
@@ -135,43 +135,41 @@
             font-size: 13px;
             transition: border-color 0.2s;
         }
-        input[type="text"]:focus {
+        input[type="text"]:focus, textarea.batch-input:focus {
             border-color: #25F4EE;
             box-shadow: 0 0 8px rgba(37, 244, 238, 0.2);
+        }
+
+        textarea.batch-input {
+            height: 70px;
+            resize: none;
+            text-align: left;
+            margin-bottom: 10px;
         }
 
         .paste-btn {
             position: absolute;
             right: 42px;
-            top: 50%;
+            top: 24px;
             transform: translateY(-50%);
             background: #334155;
             color: #fff;
             border: none;
-            padding: 6px 8px;
+            padding: 5px 8px;
             border-radius: 6px;
             font-size: 11px;
             cursor: pointer;
-            transition: background 0.2s;
         }
-        .paste-btn:hover {
-            background: #475569;
-        }
-
         .clear-btn {
             position: absolute;
             right: 12px;
-            top: 50%;
+            top: 24px;
             transform: translateY(-50%);
             background: none;
             border: none;
             color: var(--sub-text);
             font-size: 14px;
             cursor: pointer;
-            padding: 0;
-        }
-        .clear-btn:hover {
-            color: var(--text-color);
         }
         
         button.main-btn {
@@ -189,6 +187,7 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
+            margin-bottom: 10px;
         }
         button.main-btn:hover {
             opacity: 0.9;
@@ -208,7 +207,7 @@
         }
 
         #resultDiv {
-            margin-top: 20px;
+            margin-top: 15px;
             max-height: 400px;
             overflow-y: auto;
             text-align: left;
@@ -269,9 +268,6 @@
             background: #334155;
             color: #fff;
         }
-        .btn-copy:hover {
-            background: #475569;
-        }
         .badge {
             display: inline-block;
             background: var(--input-bg);
@@ -281,19 +277,6 @@
             border-radius: 6px;
             margin-bottom: 8px;
             border: 1px solid var(--card-border);
-        }
-
-        .qr-box {
-            margin-top: 8px;
-            background: #fff;
-            padding: 8px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-        .qr-box img {
-            width: 100px;
-            height: 100px;
-            display: block;
         }
 
         /* Modal Background Picker */
@@ -339,20 +322,17 @@
             font-size: 11px;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
-        .theme-option:hover {
-            border-color: #25F4EE;
-        }
 
         /* Quick Notes */
         .notes-section {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: left;
             border-top: 1px solid var(--card-border);
-            padding-top: 15px;
+            padding-top: 12px;
         }
         .notes-section textarea {
             width: 100%;
-            height: 60px;
+            height: 50px;
             background: var(--input-bg);
             border: 1px solid var(--card-border);
             color: var(--text-color);
@@ -377,16 +357,16 @@
         }
 
         .history-section {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: left;
             border-top: 1px solid var(--card-border);
-            padding-top: 15px;
+            padding-top: 12px;
         }
         .history-title {
             font-size: 12px;
             font-weight: bold;
             color: var(--sub-text);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -399,13 +379,13 @@
             cursor: pointer;
         }
         .history-list {
-            max-height: 100px;
+            max-height: 80px;
             overflow-y: auto;
             font-size: 11px;
         }
         .history-item {
             background: var(--input-bg);
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 6px;
             margin-bottom: 4px;
             display: flex;
@@ -424,11 +404,11 @@
         }
 
         .footer {
-            margin-top: 20px;
+            margin-top: 15px;
             font-size: 11px;
             color: var(--sub-text);
             border-top: 1px solid var(--card-border);
-            padding-top: 12px;
+            padding-top: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -455,18 +435,19 @@
 
         <div class="brand-icon">🎵</div>
         <h2>TikTok Downloader</h2>
-        <p class="subtitle">Unduh Video HD & Foto Slide TikTok tanpa watermark.</p>
+        <p class="subtitle">Unduh Video HD & Antrean Batch Tanpa Watermark.</p>
         
         <div class="features-grid">
             <div class="feature-item"><span>⚡</span>Tanpa Watermark</div>
             <div class="feature-item"><span>🔥</span>Kualitas HD</div>
-            <div class="feature-item"><span>🎵</span>Support Audio</div>
+            <div class="feature-item"><span>📑</span>Fitur Batch Queue</div>
         </div>
 
         <div class="input-group">
-            <input type="text" id="urlInput" placeholder="Tempel tautan TikTok...">
-            <button class="paste-btn" onclick="pasteClipboard()" title="Tempel Tautan">Paste</button>
-            <button class="clear-btn" onclick="clearInput()" title="Hapus">✕</button>
+            <label style="display:block; text-align:left; font-size:11px; color:var(--sub-text); margin-bottom:4px;">Tempel Link (Satu atau Banyak Link Sekaligus):</label>
+            <textarea class="batch-input" id="urlInput" placeholder="Tempel tautan TikTok di sini... (Pisahkan dengan baris baru jika banyak)"></textarea>
+            <button class="paste-btn" onclick="pasteClipboard()">Paste</button>
+            <button class="clear-btn" onclick="clearInput()">✕</button>
         </div>
         
         <button class="main-btn" id="btnProcess" onclick="prosesEkstrak()">
@@ -478,23 +459,23 @@
         <div class="history-section" id="historySection" style="display: none;">
             <div class="history-title">
                 <span>🕒 Riwayat Terakhir</span>
-                <button class="clear-history" onclick="clearHistory()">Hapus Riwayat</button>
+                <button class="clear-history" onclick="clearHistory()">Hapus</button>
             </div>
             <div class="history-list" id="historyList"></div>
         </div>
 
         <div class="notes-section">
             <div class="history-title"><span>📝 Catatan Kilat</span></div>
-            <textarea id="quickNotes" placeholder="Tulis catatan atau link cadangan di sini..." oninput="saveNotes()"></textarea>
+            <textarea id="quickNotes" placeholder="Tulis catatan di sini..." oninput="saveNotes()"></textarea>
         </div>
 
         <div class="footer">
-            <span>Created with ⚡ for Fast Downloading</span>
+            <span>Created with ⚡ Fast Downloader</span>
             <button class="clear-result-btn" id="clearResultBtn" onclick="clearResults()">Bersihkan Layar</button>
         </div>
     </div>
 
-    <!-- Modal Wallpaper / Background Picker -->
+    <!-- Modal Wallpaper Picker -->
     <div class="modal" id="themeModal">
         <div class="modal-content">
             <h3 style="margin-top:0; color:#25F4EE; font-size:16px;">Pilih Background Web</h3>
@@ -513,7 +494,6 @@
     </div>
 
     <script>
-        // Tema Terang / Gelap
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
@@ -521,13 +501,9 @@
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
-        // Background Picker
-        function openThemeModal() {
-            document.getElementById('themeModal').style.display = 'flex';
-        }
-        function closeThemeModal() {
-            document.getElementById('themeModal').style.display = 'none';
-        }
+        function openThemeModal() { document.getElementById('themeModal').style.display = 'flex'; }
+        function closeThemeModal() { document.getElementById('themeModal').style.display = 'none'; }
+        
         function setBg(type) {
             let bgStyle = '';
             if (type === 'gradient-default') bgStyle = 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)';
@@ -541,6 +517,7 @@
             localStorage.setItem('is_image_bg', 'false');
             closeThemeModal();
         }
+
         function uploadCustomBg(event) {
             const file = event.target.files[0];
             if (file) {
@@ -557,20 +534,12 @@
             }
         }
 
-        // Quick Notes
         function saveNotes() {
-            const text = document.getElementById('quickNotes').value;
-            localStorage.setItem('quick_notes', text);
+            localStorage.setItem('quick_notes', document.getElementById('quickNotes').value);
         }
 
-        // Network Status Check
         function updateNetworkStatus() {
-            const banner = document.getElementById('netBanner');
-            if (!navigator.onLine) {
-                banner.style.display = 'block';
-            } else {
-                banner.style.display = 'none';
-            }
+            document.getElementById('netBanner').style.display = navigator.onLine ? 'none' : 'block';
         }
         window.addEventListener('online', updateNetworkStatus);
         window.addEventListener('offline', updateNetworkStatus);
@@ -580,25 +549,18 @@
                 document.body.classList.add('light-mode');
                 document.getElementById('themeBtn').innerText = '☀️';
             }
-            
-            // Load saved background
             const savedBg = localStorage.getItem('custom_bg');
-            const isImg = localStorage.getItem('is_image_bg');
             if (savedBg) {
-                if (isImg === 'true') {
+                if (localStorage.getItem('is_image_bg') === 'true') {
                     document.body.style.background = `url('${savedBg}') no-repeat center center fixed`;
                     document.body.style.backgroundSize = 'cover';
                 } else {
                     document.body.style.background = savedBg;
                 }
             }
-
-            // Load saved notes
-            const savedNotes = localStorage.getItem('quick_notes');
-            if (savedNotes) {
-                document.getElementById('quickNotes').value = savedNotes;
+            if (localStorage.getItem('quick_notes')) {
+                document.getElementById('quickNotes').value = localStorage.getItem('quick_notes');
             }
-
             updateNetworkStatus();
             loadHistory();
         });
@@ -611,31 +573,27 @@
         async function pasteClipboard() {
             try {
                 const text = await navigator.clipboard.readText();
-                document.getElementById('urlInput').value = text;
+                const currentText = document.getElementById('urlInput').value;
+                document.getElementById('urlInput').value = currentText ? currentText + '\n' + text : text;
             } catch (err) {
-                alert("Gagal membaca clipboard. Tempel manual.");
+                alert("Gagal membaca clipboard.");
             }
         }
 
         async function downloadFile(fileUrl, filename, buttonElement) {
             const originalHTML = buttonElement.innerHTML;
             buttonElement.disabled = true;
-            buttonElement.innerHTML = `<div class="spinner"></div> Tunggu sebentar...`;
-
+            buttonElement.innerHTML = `<div class="spinner"></div> Mengunduh...`;
             try {
                 const response = await fetch(fileUrl);
                 const blob = await response.blob();
                 const blobUrl = window.URL.createObjectURL(blob);
-                
-                await new Promise(resolve => setTimeout(resolve, 800));
-
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = blobUrl;
                 a.download = filename;
                 document.body.appendChild(a);
                 a.click();
-                
                 window.URL.revokeObjectURL(blobUrl);
                 document.body.removeChild(a);
             } catch (error) {
@@ -648,9 +606,7 @@
 
         function copyLink(fileUrl) {
             navigator.clipboard.writeText(fileUrl).then(() => {
-                alert("Tautan unduhan berhasil disalin ke clipboard!");
-            }).catch(() => {
-                alert("Gagal menyalin tautan.");
+                alert("Tautan berhasil disalin!");
             });
         }
 
@@ -673,7 +629,6 @@
             let history = JSON.parse(localStorage.getItem('dl_history') || '[]');
             const historySection = document.getElementById('historySection');
             const historyList = document.getElementById('historyList');
-
             if (history.length > 0) {
                 historySection.style.display = 'block';
                 historyList.innerHTML = history.map(link => `
@@ -692,80 +647,67 @@
             loadHistory();
         }
 
+        // Fitur Batch Queue (Antrean Otomatis Banyak Link)
         async function prosesEkstrak() {
-            const urlTarget = document.getElementById('urlInput').value.trim();
+            const rawInput = document.getElementById('urlInput').value.trim();
             const btn = document.getElementById('btnProcess');
             const btnText = document.getElementById('btnText');
             const resultDiv = document.getElementById('resultDiv');
             const clearResBtn = document.getElementById('clearResultBtn');
 
-            if (!urlTarget) {
-                alert("Masukkan tautan TikTok terlebih dahulu!");
+            if (!rawInput) {
+                alert("Masukkan minimal satu tautan TikTok!");
                 return;
             }
-            if (!urlTarget.includes('tiktok.com')) {
+
+            // Memisahkan baris link jika pengguna memasukkan banyak link sekaligus
+            let urls = rawInput.split('\n').map(u => u.trim()).filter(u => u.length > 0 && u.includes('tiktok.com'));
+
+            if (urls.length === 0) {
                 alert("Tautan tidak valid! Pastikan memasukkan link TikTok yang benar.");
                 return;
             }
 
             btn.disabled = true;
-            btnText.innerHTML = `<div class="spinner"></div> Tunggu sebentar...`;
+            btnText.innerHTML = `<div class="spinner"></div> Memproses Antrean (${urls.length} link)...`;
             resultDiv.innerHTML = "";
 
-            try {
-                const apiURL = `https://www.tikwm.com/api/?url=${encodeURIComponent(urlTarget)}&hd=1`;
-                const response = await fetch(apiURL);
-                const result = await response.json();
+            let htmlContent = "";
 
-                if (result.code === 0 && result.data) {
-                    saveHistory(urlTarget);
-                    let htmlContent = "";
-                    
-                    if (result.data.images && result.data.images.length > 0) {
-                        result.data.images.forEach((imgUrl, index) => {
-                            const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(imgUrl)}`;
+            for (let i = 0; i < urls.length; i++) {
+                let urlTarget = urls[i];
+                saveHistory(urlTarget);
+
+                try {
+                    const apiURL = `https://www.tikwm.com/api/?url=${encodeURIComponent(urlTarget)}&hd=1`;
+                    const response = await fetch(apiURL);
+                    const result = await response.json();
+
+                    if (result.code === 0 && result.data) {
+                        if (result.data.play) {
+                            let videoHD = result.data.hdplay || result.data.play;
+                            let videoNormal = result.data.play;
+
                             htmlContent += `
                                 <div class="media-card">
-                                    <div class="badge">JPG - Foto Slide ${index + 1}</div>
-                                    <img src="${imgUrl}" alt="Slide ${index + 1}">
-                                    <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${index + 1}.jpg', this)">Download Foto ${index + 1}</button>
-                                    <button class="btn-download btn-copy" onclick="copyLink('${imgUrl}')">📋 Salin Link Foto</button>
-                                    <div style="margin-top:8px;"><small style="color:var(--sub-text);">Scan QR untuk Unduh:</small><br>
-                                        <div class="qr-box"><img src="${qrApi}" alt="QR Code"></div>
-                                    </div>
+                                    <div class="badge">Antrean #${i + 1} - Video HD Tanpa Watermark</div>
+                                    <video controls src="${videoHD}"></video>
+                                    <button class="btn-download btn-hd" onclick="downloadFile('${videoHD}', 'tiktok_video_${i+1}.mp4', this)">🔥 Download Video HD</button>
+                                    ${result.data.music ? `<button class="btn-download btn-audio" onclick="downloadFile('${result.data.music}', 'tiktok_audio_${i+1}.mp3', this)">🎵 Download MP3</button>` : ''}
+                                    <button class="btn-download btn-copy" onclick="copyLink('${videoHD}')">📋 Salin Tautan</button>
                                 </div>
                             `;
-                        });
-                    } else if (result.data.play) {
-                        let videoHD = result.data.hdplay || result.data.play;
-                        let videoNormal = result.data.play;
-                        const qrApiVideo = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(videoHD)}`;
-
-                        htmlContent += `
-                            <div class="media-card">
-                                <div class="badge">MP4 - Video HD Tanpa Watermark</div>
-                                <video controls src="${videoHD}"></video>
-                                <button class="btn-download btn-hd" onclick="downloadFile('${videoHD}', 'tiktok_video_HD.mp4', this)">🔥 Download Video HD (1080p)</button>
-                                ${videoHD !== videoNormal ? `<button class="btn-download" onclick="downloadFile('${videoNormal}', 'tiktok_video_SD.mp4', this)">Download Versi Standar</button>` : ''}
-                                ${result.data.music ? `<button class="btn-download btn-audio" onclick="downloadFile('${result.data.music}', 'tiktok_audio.mp3', this)">🎵 Download Musik MP3</button>` : ''}
-                                <button class="btn-download btn-copy" onclick="copyLink('${videoHD}')">📋 Salin Tautan Video</button>
-                                <div style="margin-top:8px;"><small style="color:var(--sub-text);">Scan QR untuk Unduh:</small><br>
-                                    <div class="qr-box"><img src="${qrApiVideo}" alt="QR Code"></div>
-                                </div>
-                            </div>
-                        `;
+                        }
                     }
-                    resultDiv.innerHTML = htmlContent;
-                    clearResBtn.style.display = 'inline-block';
-                } else {
-                    alert("Gagal mengambil data TikTok. Pastikan link publik dan benar!");
+                } catch (err) {
+                    console.error("Gagal memproses link: " + urlTarget);
                 }
-            } catch (error) {
-                alert("Terjadi kendala jaringan. Periksa koneksi internet Anda.");
-            } finally {
-                btn.disabled = false;
-                btnText.innerText = "Proses & Ambil Media";
             }
+
+            resultDiv.innerHTML = htmlContent || "<p style='color:#ef4444; text-align:center;'>Gagal memproses tautan.</p>";
+            clearResBtn.style.display = 'inline-block';
+            btn.disabled = false;
+            btnText.innerText = "Proses & Ambil Media";
         }
     </script>
 </body>
