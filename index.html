@@ -123,8 +123,9 @@
             position: relative;
             margin-bottom: 15px;
         }
-        input[type="text"], textarea.batch-input {
+        textarea.batch-input {
             width: 100%;
+            height: 70px;
             padding: 12px;
             border: 1px solid var(--card-border);
             border-radius: 10px;
@@ -133,18 +134,13 @@
             box-sizing: border-box;
             outline: none;
             font-size: 13px;
-            transition: border-color 0.2s;
-        }
-        input[type="text"]:focus, textarea.batch-input:focus {
-            border-color: #25F4EE;
-            box-shadow: 0 0 8px rgba(37, 244, 238, 0.2);
-        }
-
-        textarea.batch-input {
-            height: 70px;
             resize: none;
             text-align: left;
-            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+        textarea.batch-input:focus {
+            border-color: #25F4EE;
+            box-shadow: 0 0 8px rgba(37, 244, 238, 0.2);
         }
 
         .paste-btn {
@@ -435,11 +431,11 @@
 
         <div class="brand-icon">🎵</div>
         <h2>TikTok Downloader</h2>
-        <p class="subtitle">Unduh Video HD & Antrean Batch Tanpa Watermark.</p>
+        <p class="subtitle">Unduh Video & Foto Slide Tanpa Watermark.</p>
         
         <div class="features-grid">
             <div class="feature-item"><span>⚡</span>Tanpa Watermark</div>
-            <div class="feature-item"><span>🔥</span>Kualitas HD</div>
+            <div class="feature-item"><span>🖼️</span>Support Foto</div>
             <div class="feature-item"><span>📑</span>Fitur Batch Queue</div>
         </div>
 
@@ -647,7 +643,7 @@
             loadHistory();
         }
 
-        // Fitur Batch Queue (Antrean Otomatis Banyak Link)
+        // Proses Ekstrak untuk Video & Foto Slide (Support Batch Queue)
         async function prosesEkstrak() {
             const rawInput = document.getElementById('urlInput').value.trim();
             const btn = document.getElementById('btnProcess');
@@ -660,7 +656,6 @@
                 return;
             }
 
-            // Memisahkan baris link jika pengguna memasukkan banyak link sekaligus
             let urls = rawInput.split('\n').map(u => u.trim()).filter(u => u.length > 0 && u.includes('tiktok.com'));
 
             if (urls.length === 0) {
@@ -684,7 +679,21 @@
                     const result = await response.json();
 
                     if (result.code === 0 && result.data) {
-                        if (result.data.play) {
+                        // Cek apakah postingan berupa Foto Slide
+                        if (result.data.images && result.data.images.length > 0) {
+                            result.data.images.forEach((imgUrl, imgIndex) => {
+                                htmlContent += `
+                                    <div class="media-card">
+                                        <div class="badge">Foto Slide ${imgIndex + 1} (Antrean #${i + 1})</div>
+                                        <img src="${imgUrl}" alt="Slide ${imgIndex + 1}">
+                                        <button class="btn-download" onclick="downloadFile('${imgUrl}', 'tiktok_foto_${i+1}_${imgIndex + 1}.jpg', this)">Download Foto ${imgIndex + 1}</button>
+                                        <button class="btn-download btn-copy" onclick="copyLink('${imgUrl}')">📋 Salin Link Foto</button>
+                                    </div>
+                                `;
+                            });
+                        } 
+                        // Jika postingan berupa Video
+                        else if (result.data.play) {
                             let videoHD = result.data.hdplay || result.data.play;
                             let videoNormal = result.data.play;
 
